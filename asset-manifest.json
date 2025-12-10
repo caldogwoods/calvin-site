@@ -1,17 +1,17 @@
 {
   "files": {
     "main.css": "/calvin-site/static/css/main.f855e6bc.css",
-    "main.js": "/calvin-site/static/js/main.e10c29f7.js",
+    "main.js": "/calvin-site/static/js/main.e9c6cd52.js",
     "static/js/453.7cee6ec2.chunk.js": "/calvin-site/static/js/453.7cee6ec2.chunk.js",
     "static/media/calvin-hobbes.jpg": "/calvin-site/static/media/calvin-hobbes.9ed339a168a8bd49701f.jpg",
     "static/media/hobbes.jpg": "/calvin-site/static/media/hobbes.f4e3a9bdbe997b5366bb.jpg",
     "index.html": "/calvin-site/index.html",
     "main.f855e6bc.css.map": "/calvin-site/static/css/main.f855e6bc.css.map",
-    "main.e10c29f7.js.map": "/calvin-site/static/js/main.e10c29f7.js.map",
+    "main.e9c6cd52.js.map": "/calvin-site/static/js/main.e9c6cd52.js.map",
     "453.7cee6ec2.chunk.js.map": "/calvin-site/static/js/453.7cee6ec2.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.f855e6bc.css",
-    "static/js/main.e10c29f7.js"
+    "static/js/main.e9c6cd52.js"
   ]
 }
