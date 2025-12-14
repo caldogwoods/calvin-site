@@ -1,23 +1,36 @@
-import logo from './logo.svg';
+import logo from './assets/calvin-hobbes.jpg';
 import './App.css';
+import { Routes, Route, Link } from 'react-router-dom';
+import LotrMap from './LotrMap';
+import MediaReviews from './MediaReviews';
 
-function App() {
+function Home() {
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
+        <img src={logo} alt="calvin and hobbes" />
         <p>
-          Edit <code>src/App.js</code> and save to reload.
+          Testing GitHub Pages for Calvin Woods.
         </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
       </header>
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <div>
+      <nav className="App-nav">
+        <Link to=".">Home</Link>
+        <Link to="lotr-map">LOTR Map</Link>
+        <Link to="media-reviews">Media Reviews</Link>
+      </nav>
+
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="lotr-map" element={<LotrMap />} />
+        <Route path="media-reviews" element={<MediaReviews />} />
+      </Routes>
     </div>
   );
 }
