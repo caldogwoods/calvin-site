@@ -1,8 +1,8 @@
 import logo from './assets/calvin-hobbes.jpg';
 import './App.css';
 import { Routes, Route, Link } from 'react-router-dom';
-import LotrMap from './LotrMap';
-import MediaReviews from './MediaReviews';
+import LotrMap from './lotr/LotrMap';
+import MediaReviews from './media/MediaReviews';
 
 function Home() {
   return (

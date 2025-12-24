@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import hobbes from './assets/hobbes.jpg';
+import hobbes from '../assets/hobbes.jpg';
 
 export default function MediaReviews() {
   return (

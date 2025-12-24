@@ -1,0 +1,118 @@
+/* Styles for LotrMap page */
+.lotr-map-container {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 12px;
+  padding: 16px;
+}
+
+.map-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #111;
+  border-radius: 6px;
+  overflow: hidden;
+  /* Make the image take most of the viewport height */
+  height: calc(100vh - 220px);
+  position: relative;
+}
+
+.map-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.timeline {
+  /* move horizontal padding to the timeline container so the track spans full width */
+  padding: 12px 24px;
+  background: linear-gradient(180deg, #f7f7f7, #fff);
+  border-radius: 6px;
+}
+
+.timeline-track {
+  position: relative;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  padding: 0; /* no horizontal padding here, positions are percent-based */
+}
+
+.track-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: #ddd;
+  border-radius: 2px;
+}
+
+.notch {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 2px;
+  height: 18px;
+  background: #666;
+  cursor: pointer;
+}
+
+.notch-labels {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0 0 0;
+  font-size: 0.9rem;
+  color: #333;
+}
+
+.timeline-handle {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 18px;
+  height: 18px;
+  background: #1f6feb;
+  border-radius: 50%;
+  border: 3px solid #fff;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.18);
+  cursor: grab;
+  z-index: 5;
+}
+
+.timeline-handle:active {
+  cursor: grabbing;
+}
+
+.notch.active {
+  background: #1f6feb;
+  height: 22px;
+}
+
+.era-label {
+  text-align: center;
+  font-size: 0.85rem;
+}
+
+.map-fallback {
+  color: #ddd;
+  padding: 24px;
+  text-align: center;
+}
+
+/* Selected era badge overlay on the map */
+.selected-era {
+  position: absolute;
+  left: 16px;
+  top: 16px;
+  z-index: 10;
+  background: rgba(0,0,0,0.6);
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}

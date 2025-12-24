@@ -1,24 +1,28 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import './LotrMap.css';
-import firstAgeMap from './assets/lotr-first-age-map.webp';
-import middleEarthMap from './assets/middle-earth-detailed.jpg';
+import firstAgeMap from '../assets/lotr-first-age-map.webp';
+import secondAgeMap from '../assets/map-of-middle-earth.jpeg';
+import thirdAgeMap from '../assets/lotr-first-age-map.webp';
+import fourthAgeMap from '../assets/lotr-first-age-map.webp';
+import middleEarthMap from '../assets/middle-earth-detailed.jpg';
 
 const ERAS = ['First Age', 'Second Age', 'Third Age', 'Fourth Age', 'Latter Ages'];
-  // Map images per era. Replace the placeholders with specific images
-  // if you add them to `src/assets` (e.g. `lotr-second-age-map.webp`).
-  const maps = [
-    firstAgeMap, // First Age
-    middleEarthMap, // Second Age (placeholder)
-    firstAgeMap, // Third Age (placeholder)
-    firstAgeMap, // Fourth Age (placeholder)
-    firstAgeMap, // Latter Ages (placeholder)
-  ];
 
 export default function LotrMap() {
   const [selected, setSelected] = useState(0);
   const trackRef = useRef(null);
   const handleRef = useRef(null);
+
+  // Map images per era. Replace placeholders by adding images to src/assets and
+  // importing them here.
+  const maps = [
+    firstAgeMap, // First Age
+    secondAgeMap, // Second Age (placeholder)
+    thirdAgeMap, // Third Age (placeholder)
+    fourthAgeMap, // Fourth Age (placeholder)
+    middleEarthMap, // Latter Ages (placeholder)
+  ];
 
   const [imageSrc, setImageSrc] = useState(maps[0]);
 
@@ -80,7 +84,6 @@ export default function LotrMap() {
     const track = trackRef.current;
     if (handle) handle.addEventListener('pointerdown', startDrag);
     const clickJump = (e) => {
-      // allow clicking on track to jump to nearest notch
       const idx = indexForClientX(e.clientX);
       setSelected(idx);
     };
@@ -95,12 +98,11 @@ export default function LotrMap() {
     };
   }, [positions]);
 
-  
-
   return (
     <div className="lotr-map-container">
       <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
         <h2>LOTR Map</h2>
+        <h3>...under construction</h3>
         <div><Link to="..">← Back</Link></div>
       </div>
 
