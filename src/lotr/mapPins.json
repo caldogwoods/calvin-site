@@ -1,0 +1,80 @@
+[
+  {
+    "title": "The Shire",
+    "description": "Frodo's home where he inherits the One Ring from Bilbo on his 111th birthday.",
+    "date": "September 22, TA 3018",
+    "coordinates": { "x": 150, "y": 380 }
+  },
+  {
+    "title": "Rivendell",
+    "description": "Elrond's realm where the Fellowship is formed to destroy the One Ring.",
+    "date": "December 25, TA 3018",
+    "coordinates": { "x": 320, "y": 240 }
+  },
+  {
+    "title": "Moria",
+    "description": "Dwarven mines where Gandalf falls battling the Balrog.",
+    "date": "January 15, TA 3019",
+    "coordinates": { "x": 280, "y": 200 }
+  },
+  {
+    "title": "Lothlórien",
+    "description": "Galadriel's golden forest realm where Aragorn and Arwen pledge their love.",
+    "date": "February 14, TA 3019",
+    "coordinates": { "x": 300, "y": 180 }
+  },
+  {
+    "title": "Rauros",
+    "description": "The falls where Boromir dies trying to take the Ring from Frodo.",
+    "date": "February 26, TA 3019",
+    "coordinates": { "x": 380, "y": 300 }
+  },
+  {
+    "title": "Emyn Muil",
+    "description": "Frodo and Sam escape Boromir and continue their journey to Mordor.",
+    "date": "February 27, TA 3019",
+    "coordinates": { "x": 420, "y": 310 }
+  },
+  {
+    "title": "Helm's Deep",
+    "description": "Massive fortress where men and elves defend against Saruman's forces.",
+    "date": "March 3-4, TA 3019",
+    "coordinates": { "x": 260, "y": 350 }
+  },
+  {
+    "title": "Isengard",
+    "description": "Saruman's stronghold, destroyed by the Ents at Gandalf's behest.",
+    "date": "March 27, TA 3019",
+    "coordinates": { "x": 220, "y": 330 }
+  },
+  {
+    "title": "Pelennor Fields",
+    "description": "The great battle of Gondor where the Rohirrim charge against Sauron's army.",
+    "date": "March 15, TA 3019",
+    "coordinates": { "x": 410, "y": 380 }
+  },
+  {
+    "title": "Mount Doom",
+    "description": "The volcanic mountain where the One Ring is destroyed by Gollum and Frodo.",
+    "date": "March 25, TA 3019",
+    "coordinates": { "x": 520, "y": 420 }
+  },
+  {
+    "title": "Barad-dûr",
+    "description": "Sauron's dark tower, destroyed when the Ring is unmade.",
+    "date": "March 25, TA 3019",
+    "coordinates": { "x": 530, "y": 410 }
+  },
+  {
+    "title": "Minas Tirith",
+    "description": "Capital of Gondor, attacked by Sauron's forces led by the Witch-king.",
+    "date": "March 15, TA 3019",
+    "coordinates": { "x": 400, "y": 370 }
+  },
+  {
+    "title": "The Black Gate",
+    "description": "Main entrance to Mordor where Aragorn and the forces of the West make their stand.",
+    "date": "March 25, TA 3019",
+    "coordinates": { "x": 480, "y": 400 }
+  }
+]

@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import './LotrMap.css';
+// map assets
 import firstAgeMap from '../assets/lotr-first-age-map.webp';
 import secondAgeMap from '../assets/map-of-middle-earth.jpeg';
 import thirdAgeMap from '../assets/lotr-first-age-map.webp';
@@ -100,10 +101,15 @@ export default function LotrMap() {
 
   return (
     <div className="lotr-map-container">
-      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-        <h2>LOTR Map</h2>
-        <h3>...under construction</h3>
-        <div><Link to="..">← Back</Link></div>
+      <div style={{display: 'flex', flexDirection: 'column', gap: '10px'}}>
+        <div style={{display: 'flex', justifyContent: 'flex-end', alignItems: 'center'}}>
+          <div><Link to="..">← Back</Link></div>
+        </div>
+        <div style={{ textAlign: 'center' }}>
+          <h2>LOTR Map</h2>
+          <h3>...under construction</h3>
+          <h4>-help me with content Jacob!</h4>
+        </div>
       </div>
 
       <div className="map-wrapper">
