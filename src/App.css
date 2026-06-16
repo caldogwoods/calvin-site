@@ -102,7 +102,12 @@
   width: 100%;
 }
 
-.nav-logout-btn {
+/* Account Dropdown */
+.nav-account-wrapper {
+  position: relative;
+}
+
+.nav-account-btn {
   background: rgba(255, 255, 255, 0.2);
   color: white;
   border: 1px solid rgba(255, 255, 255, 0.3);
@@ -114,9 +119,47 @@
   transition: all 0.3s;
 }
 
-.nav-logout-btn:hover {
+.nav-account-btn:hover {
   background: rgba(255, 255, 255, 0.3);
   border-color: rgba(255, 255, 255, 0.5);
+}
+
+.account-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  min-width: 200px;
+  overflow: hidden;
+  z-index: 1000;
+}
+
+.account-dropdown-username {
+  padding: 12px 16px;
+  background: #f7f7f7;
+  color: #333;
+  font-weight: 600;
+  border-bottom: 1px solid #e0e0e0;
+  font-size: 14px;
+}
+
+.account-dropdown-logout {
+  width: 100%;
+  padding: 12px 16px;
+  background: white;
+  color: #dc3545;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+.account-dropdown-logout:hover {
+  background: #f7f7f7;
 }
 
 /* Hamburger Menu */
@@ -190,11 +233,38 @@
     display: none;
   }
 
-  .nav-logout-btn {
+  .nav-account-wrapper {
+    width: 100%;
+  }
+
+  .nav-account-btn {
     width: 100%;
     padding: 12px 16px;
     font-size: 16px;
     text-align: left;
+  }
+
+  .account-dropdown {
+    position: static;
+    box-shadow: none;
+    margin-top: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+  }
+
+  .account-dropdown-username {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border-bottom-color: rgba(255, 255, 255, 0.2);
+  }
+
+  .account-dropdown-logout {
+    background: transparent;
+    color: white;
+    font-size: 16px;
+  }
+
+  .account-dropdown-logout:hover {
+    background: rgba(255, 255, 255, 0.1);
   }
 }
 

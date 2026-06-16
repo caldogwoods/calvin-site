@@ -27,9 +27,28 @@ function Home() {
 function Navigation() {
   const { user, signOut } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [accountMenuOpen, setAccountMenuOpen] = useState(false);
+  const accountMenuRef = React.useRef(null);
 
   const toggleMenu = () => setMobileMenuOpen(!mobileMenuOpen);
   const closeMenu = () => setMobileMenuOpen(false);
+  const toggleAccountMenu = () => setAccountMenuOpen(!accountMenuOpen);
+
+  // Close account menu when clicking outside
+  React.useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (accountMenuRef.current && !accountMenuRef.current.contains(event.target)) {
+        setAccountMenuOpen(false);
+      }
+    };
+
+    if (accountMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [accountMenuOpen]);
 
   return (
     <nav className="App-nav">
@@ -50,9 +69,26 @@ function Navigation() {
           <Link to="media-reviews" onClick={closeMenu}>Media Reviews</Link>
           <Link to="exercise-tracker" onClick={closeMenu}>Exercise Tracker</Link>
           {user ? (
-            <button onClick={() => { signOut(); closeMenu(); }} className="nav-logout-btn">
-              Logout
-            </button>
+            <div className="nav-account-wrapper" ref={accountMenuRef}>
+              <button onClick={toggleAccountMenu} className="nav-account-btn">
+                Account ▾
+              </button>
+              {accountMenuOpen && (
+                <div className="account-dropdown">
+                  <div className="account-dropdown-username">{user.email.split('@')[0]}</div>
+                  <button
+                    onClick={() => {
+                      signOut();
+                      closeMenu();
+                      setAccountMenuOpen(false);
+                    }}
+                    className="account-dropdown-logout"
+                  >
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
           ) : (
             <Link to="login" onClick={closeMenu}>Login</Link>
           )}

@@ -49,11 +49,19 @@ export default function ExerciseTracker() {
     const activityType = ACTIVITY_TYPES.find(a => a.name === selectedActivity);
 
     try {
+      // Calculate points and round to nearest integer
+      let calculatedPoints;
+      if (activityType.multiplier) {
+        calculatedPoints = duration ? Math.ceil(parseFloat(duration) * activityType.points) : 0;
+      } else {
+        calculatedPoints = Math.ceil(activityType.points);
+      }
+
       const { error } = await supabase.from('activities').insert({
         user_id: user.id,
         activity_type: selectedActivity,
-        duration_minutes: duration ? parseInt(duration) : null,
-        points: activityType.multiplier ? (duration ? parseInt(duration) * activityType.points : 0) : activityType.points,
+        duration_minutes: duration ? parseFloat(duration) : null,
+        points: calculatedPoints,
         notes,
         activity_date: activityDate,
       });
