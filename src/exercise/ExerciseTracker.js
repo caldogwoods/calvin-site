@@ -155,18 +155,6 @@ export default function ExerciseTracker() {
             </div>
 
             <div className="form-group">
-              <label htmlFor="activity-date">Date</label>
-              <input
-                id="activity-date"
-                type="date"
-                value={activityDate}
-                onChange={(e) => setActivityDate(e.target.value)}
-                disabled={submitting}
-                required
-              />
-            </div>
-
-            <div className="form-group">
               <label htmlFor="duration">Duration (minutes)</label>
               <input
                 id="duration"
@@ -175,7 +163,19 @@ export default function ExerciseTracker() {
                 onChange={(e) => setDuration(e.target.value)}
                 placeholder="Optional"
                 min="1"
+                disabled={submitting || !ACTIVITY_TYPES.find(a => a.name === selectedActivity).multiplier}
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="activity-date">Date</label>
+              <input
+                id="activity-date"
+                type="date"
+                value={activityDate}
+                onChange={(e) => setActivityDate(e.target.value)}
                 disabled={submitting}
+                required
               />
             </div>
 
