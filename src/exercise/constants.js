@@ -1,11 +1,12 @@
 export const ACTIVITY_TYPES = [
-  { name: 'Running', points: 0.3, multiplier: true },
   { name: 'Walking', points: 0.2, multiplier: true },
+  { name: 'Running', points: 0.3, multiplier: true },
   { name: 'Cycling', points: 0.3, multiplier: true },
   { name: 'Gym Workout', points: 10, multiplier: false },
   { name: 'Yoga (~1 hour)', points: 5, multiplier: false },
   { name: 'Pushups', points: 1, multiplier: false },
   { name: 'Perfect Pushups (full set)', points: 6, multiplier: false },
+  { name: 'Squats', points: 2, multiplier: false },
   { name: 'HITT (~10 min)', points: 7, multiplier: false },
 ];
 

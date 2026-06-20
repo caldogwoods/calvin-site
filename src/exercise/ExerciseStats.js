@@ -14,6 +14,8 @@ export default function ExerciseStats() {
   const [showGoalForm, setShowGoalForm] = useState(false);
   const [targetPoints, setTargetPoints] = useState('');
   const [endDate, setEndDate] = useState('');
+  const [goalName, setGoalName] = useState('');
+  const [editingGoal, setEditingGoal] = useState(false);
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -74,6 +76,7 @@ export default function ExerciseStats() {
         user_id: user.id,
         target_points: parseInt(targetPoints),
         end_date: endDate,
+        name: goalName || null,
         is_active: true,
       });
 
@@ -81,6 +84,7 @@ export default function ExerciseStats() {
 
       setTargetPoints('');
       setEndDate('');
+      setGoalName('');
       setShowGoalForm(false);
       await fetchData();
     } catch (error) {
@@ -104,6 +108,47 @@ export default function ExerciseStats() {
       console.error('Error deleting goal:', error);
       setError('Failed to delete goal');
     }
+  };
+
+  const handleEditGoal = () => {
+    setEditingGoal(true);
+    setGoalName(goal.name || '');
+    setTargetPoints(goal.target_points.toString());
+    setEndDate(goal.end_date);
+  };
+
+  const handleUpdateGoal = async (e) => {
+    e.preventDefault();
+    setError('');
+
+    try {
+      const { error } = await supabase
+        .from('goals')
+        .update({
+          name: goalName || null,
+          target_points: parseInt(targetPoints),
+          end_date: endDate,
+        })
+        .eq('id', goal.id);
+
+      if (error) throw error;
+
+      setEditingGoal(false);
+      setGoalName('');
+      setTargetPoints('');
+      setEndDate('');
+      await fetchData();
+    } catch (error) {
+      console.error('Error updating goal:', error);
+      setError('Failed to update goal: ' + error.message);
+    }
+  };
+
+  const cancelEdit = () => {
+    setEditingGoal(false);
+    setGoalName('');
+    setTargetPoints('');
+    setEndDate('');
   };
 
   // Calculate stats
@@ -170,30 +215,85 @@ export default function ExerciseStats() {
         <div className="stat-card goal-card">
           <h3>Goal</h3>
           {goal ? (
-            <div className="goal-display">
-              <div className="goal-info">
-                <div className="goal-target">{goal.target_points} points by {new Date(goal.end_date).toLocaleDateString()}</div>
-                <div className="goal-status">
-                  <div className="goal-stat">
-                    <span className="goal-label">Points Left:</span>
-                    <span className="goal-value">{pointsLeft}</span>
-                  </div>
-                  <div className="goal-stat">
-                    <span className="goal-label">Days Left:</span>
-                    <span className="goal-value">{daysLeft}</span>
-                  </div>
+            editingGoal ? (
+              <form onSubmit={handleUpdateGoal} className="goal-form">
+                <div className="form-group">
+                  <label htmlFor="edit-goal-name">Goal Name (Optional)</label>
+                  <input
+                    id="edit-goal-name"
+                    type="text"
+                    value={goalName}
+                    onChange={(e) => setGoalName(e.target.value)}
+                    placeholder="e.g., Summer Fitness Challenge"
+                  />
                 </div>
-                <div className="progress-bar">
-                  <div className="progress-fill" style={{ width: `${progressPercent}%` }}></div>
+                <div className="form-group">
+                  <label htmlFor="edit-target-points">Target Points</label>
+                  <input
+                    id="edit-target-points"
+                    type="number"
+                    value={targetPoints}
+                    onChange={(e) => setTargetPoints(e.target.value)}
+                    required
+                    min="1"
+                  />
                 </div>
-                <div className="progress-text">{Math.round(progressPercent)}% complete</div>
+                <div className="form-group">
+                  <label htmlFor="edit-end-date">End Date</label>
+                  <input
+                    id="edit-end-date"
+                    type="date"
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
+                    required
+                    min={new Date().toISOString().split('T')[0]}
+                  />
+                </div>
+                <div className="form-buttons">
+                  <button type="submit" className="btn-primary">Update Goal</button>
+                  <button type="button" onClick={cancelEdit} className="btn-secondary">Cancel</button>
+                </div>
+              </form>
+            ) : (
+              <div className="goal-display">
+                <div className="goal-info">
+                  {goal.name && <div className="goal-name">{goal.name}</div>}
+                  <div className="goal-target">{goal.target_points} points by {new Date(goal.end_date).toLocaleDateString()}</div>
+                  <div className="goal-status">
+                    <div className="goal-stat">
+                      <span className="goal-label">Points Left:</span>
+                      <span className="goal-value">{pointsLeft}</span>
+                    </div>
+                    <div className="goal-stat">
+                      <span className="goal-label">Days Left:</span>
+                      <span className="goal-value">{daysLeft}</span>
+                    </div>
+                  </div>
+                  <div className="progress-bar">
+                    <div className="progress-fill" style={{ width: `${progressPercent}%` }}></div>
+                  </div>
+                  <div className="progress-text">{Math.round(progressPercent)}% complete</div>
+                </div>
+                <div className="form-buttons">
+                  <button onClick={handleEditGoal} className="btn-primary">Edit Goal</button>
+                  <button onClick={handleDeleteGoal} className="btn-secondary">Clear Goal</button>
+                </div>
               </div>
-              <button onClick={handleDeleteGoal} className="btn-secondary">Clear Goal</button>
-            </div>
+            )
           ) : (
             <div className="no-goal">
               {showGoalForm ? (
                 <form onSubmit={handleSetGoal} className="goal-form">
+                  <div className="form-group">
+                    <label htmlFor="goal-name">Goal Name (Optional)</label>
+                    <input
+                      id="goal-name"
+                      type="text"
+                      value={goalName}
+                      onChange={(e) => setGoalName(e.target.value)}
+                      placeholder="e.g., Summer Fitness Challenge"
+                    />
+                  </div>
                   <div className="form-group">
                     <label htmlFor="target-points">Target Points</label>
                     <input
