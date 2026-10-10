@@ -6,12 +6,13 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 import LotrMap from './lotr/LotrMap';
 import MediaReviews, { ComingSoon } from './media/MediaReviews';
 import GameReviews from './media/GameReviews';
-import AddGame from './media/AddGame';
+import AddReview from './media/AddReview';
 import ExerciseTracker from './exercise/ExerciseTracker';
 import ExerciseStats from './exercise/ExerciseStats';
 import Login from './components/Login';
 import Register from './components/Register';
 import ProtectedRoute from './components/ProtectedRoute';
+import AdminRoute from './components/AdminRoute';
 
 function Home() {
   return (
@@ -113,9 +114,15 @@ function AppContent() {
           <Route path="books" element={<ComingSoon icon="📚" title="Book reviews" />} />
           <Route path="shows" element={<ComingSoon icon="🎬" title="Movie and show reviews" />} />
         </Route>
-        {/* Not linked in the nav on purpose */}
-        <Route path="media-reviews/games/new" element={<AddGame />} />
-        <Route path="media-reviews/new" element={<Navigate to="/media-reviews/games/new" replace />} />
+        <Route
+          path="media-reviews/new"
+          element={
+            <AdminRoute>
+              <AddReview />
+            </AdminRoute>
+          }
+        />
+        <Route path="media-reviews/games/new" element={<Navigate to="/media-reviews/new?type=games" replace />} />
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
         <Route

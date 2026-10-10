@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavLink, Outlet } from 'react-router-dom';
+import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 import './MediaReviews.css';
 
 // Each tab is a child route of /media-reviews (see App.js)
@@ -10,10 +10,21 @@ const TABS = [
 ];
 
 export default function MediaReviews() {
+  const { pathname } = useLocation();
+  // Start the add form on the type of the open tab
+  const currentTab = TABS.find((tab) => pathname.endsWith(`/${tab.path}`));
+  const addUrl = `/media-reviews/new${currentTab ? `?type=${currentTab.path}` : ''}`;
+
   return (
     <div className="reviews-container">
       <header className="reviews-header">
-        <h2>Media Reviews</h2>
+        <div className="reviews-title-row">
+          <h2>Media Reviews</h2>
+          {/* Shown to everyone; the add page itself is admin-only */}
+          <Link to={addUrl} className="add-review-button">
+            <span aria-hidden="true">+</span> Add review
+          </Link>
+        </div>
         <nav className="reviews-tabs" aria-label="Media type">
           {TABS.map((tab) => (
             <NavLink

@@ -3,6 +3,14 @@ import { supabase } from '../supabaseClient';
 
 const AuthContext = createContext({});
 
+// Supabase user ids (comma-separated) that see admin-only controls, such as the
+// "Edit on GitHub" links. This only hides UI; GitHub repo access is what
+// actually protects the content.
+const ADMIN_USER_IDS = (process.env.REACT_APP_ADMIN_USER_IDS || '')
+  .split(',')
+  .map((id) => id.trim())
+  .filter(Boolean);
+
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
@@ -75,6 +83,7 @@ export const AuthProvider = ({ children }) => {
   const value = {
     user,
     loading,
+    isAdmin: Boolean(user && ADMIN_USER_IDS.includes(user.id)),
     signUp,
     signIn,
     signOut,

@@ -1,9 +1,12 @@
 import React, { useMemo, useState } from 'react';
-import games, { GAMES_DIR } from './games';
+import { useAuth } from '../contexts/AuthContext';
+import games from './games';
+import { MEDIA_TYPES } from './mediaTypes';
 import { editFileUrl } from './github';
 import './GameReviews.css';
 
-// Games are the .json files in ./games (see games/index.js for the fields).
+// Games are the .json files in ./games (see mediaTypes.js for the fields).
+const GAMES_DIR = MEDIA_TYPES.games.dir;
 
 const MAX_SCORE = 10;
 
@@ -66,7 +69,7 @@ function GameImage({ src, name }) {
   );
 }
 
-function GameDetails({ game }) {
+function GameDetails({ game, canEdit }) {
   const paragraphs = (game.review || '').split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
   return (
     <div className="game-details">
@@ -84,19 +87,22 @@ function GameDetails({ game }) {
           <p className="muted">No thoughts written yet.</p>
         )}
       </div>
-      <a
-        className="details-edit-link"
-        href={editFileUrl(`${GAMES_DIR}/${game.id}.json`)}
-        target="_blank"
-        rel="noreferrer"
-      >
-        Edit on GitHub ↗
-      </a>
+      {canEdit && (
+        <a
+          className="details-edit-link"
+          href={editFileUrl(`${GAMES_DIR}/${game.id}.json`)}
+          target="_blank"
+          rel="noreferrer"
+        >
+          Edit on GitHub ↗
+        </a>
+      )}
     </div>
   );
 }
 
 export default function GameReviews() {
+  const { isAdmin } = useAuth();
   const [sort, setSort] = useState({ key: 'playedStart', dir: 'desc' });
   const [expanded, setExpanded] = useState(() => new Set());
 
@@ -218,7 +224,7 @@ export default function GameReviews() {
                   {isOpen && (
                     <tr className="details-row" id={detailsId}>
                       <td colSpan={COLUMNS.length + 1}>
-                        <GameDetails game={game} />
+                        <GameDetails game={game} canEdit={isAdmin} />
                       </td>
                     </tr>
                   )}

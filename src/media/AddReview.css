@@ -1,11 +1,11 @@
-.add-game-container {
+.add-review-container {
   max-width: 1000px;
   margin: 0 auto;
   padding: 32px 20px 48px;
   color: #2d3142;
 }
 
-.add-game-header {
+.add-review-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
@@ -13,61 +13,110 @@
   margin-bottom: 24px;
 }
 
-.add-game-header h2 {
+.add-review-header h2 {
   margin: 0;
   font-size: 28px;
   font-weight: 700;
   letter-spacing: -0.02em;
 }
 
-.add-game-subtitle {
+.add-review-subtitle {
   margin: 6px 0 0;
   color: #6b7080;
   font-size: 15px;
 }
 
-.add-game-header .back-link {
+.add-review-header .back-link {
   color: #667eea;
   text-decoration: none;
   font-weight: 500;
 }
 
-.add-game-header .back-link:hover {
+.add-review-header .back-link:hover {
   text-decoration: underline;
 }
 
-.add-game-status {
+/* Review type switch */
+.type-switch {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 4px;
+  margin-bottom: 20px;
+  background: #eef0fc;
+  border-radius: 10px;
+}
+
+.type-option {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 7px;
+  color: #4c5bd4;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+}
+
+.type-option:hover {
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.type-option.active {
+  background: white;
+  color: #2d3142;
+  font-weight: 600;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+}
+
+/* Keep the radio usable by keyboard and screen readers, but hide the dot */
+.type-option input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+.type-option:focus-within {
+  outline: 2px solid #667eea;
+  outline-offset: 1px;
+}
+
+.add-review-status {
   padding: 12px 16px;
   border-radius: 8px;
   margin-bottom: 20px;
   font-size: 14px;
 }
 
-.add-game-status.success {
+.add-review-status.success {
   background: #e6f7ee;
   color: #1f8a4c;
 }
 
-.add-game-status.error {
+.add-review-status.error {
   background: #fdecec;
   color: #c0392b;
 }
 
-.add-game-grid {
+.add-review-grid {
   display: grid;
   grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
   gap: 24px;
   align-items: start;
 }
 
-.add-game-card {
+.add-review-card {
   background: white;
   padding: 24px;
   border-radius: 12px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
 }
 
-.add-game-card h3 {
+.add-review-card h3 {
   margin: 0 0 12px;
   font-size: 12px;
   font-weight: 600;
@@ -89,6 +138,7 @@
 }
 
 .form-field input,
+.form-field select,
 .form-field textarea {
   width: 100%;
   box-sizing: border-box;
@@ -106,6 +156,7 @@
 }
 
 .form-field input:focus,
+.form-field select:focus,
 .form-field textarea:focus {
   outline: none;
   border-color: #667eea;
@@ -137,7 +188,7 @@
   cursor: pointer;
 }
 
-.add-game-submit {
+.add-review-submit {
   width: 100%;
   padding: 12px;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -151,11 +202,11 @@
   transition: opacity 0.2s;
 }
 
-.add-game-submit:hover {
+.add-review-submit:hover {
   opacity: 0.9;
 }
 
-.add-game-submit:disabled {
+.add-review-submit:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
@@ -304,16 +355,16 @@
 }
 
 @media (max-width: 768px) {
-  .add-game-container {
+  .add-review-container {
     padding: 20px 16px 32px;
   }
 
-  .add-game-header {
+  .add-review-header {
     flex-direction: column;
     align-items: flex-start;
   }
 
-  .add-game-grid {
+  .add-review-grid {
     grid-template-columns: 1fr;
   }
 }
