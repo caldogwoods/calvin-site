@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../supabaseClient';
 import { Link } from 'react-router-dom';
@@ -16,13 +16,7 @@ export default function ExerciseTracker() {
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
-  useEffect(() => {
-    if (user) {
-      fetchActivities();
-    }
-  }, [user]);
-
-  const fetchActivities = async () => {
+  const fetchActivities = useCallback(async () => {
     try {
       setLoading(true);
       const { data, error } = await supabase
@@ -39,7 +33,13 @@ export default function ExerciseTracker() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
+
+  useEffect(() => {
+    if (user) {
+      fetchActivities();
+    }
+  }, [user, fetchActivities]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

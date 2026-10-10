@@ -1,8 +1,11 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import jsonGames from './games.json';
-import { DB_ENABLED, insertGame } from './gamesApi';
+import games, { GAMES_DIR } from './games';
+import { newFileUrl, slugify } from './github';
 import './AddGame.css';
+
+// Browsers and GitHub can reject very long URLs; above this, suggest copying instead
+const MAX_URL_LENGTH = 8000;
 
 const EMPTY_FORM = {
   name: '',
@@ -17,7 +20,7 @@ const EMPTY_FORM = {
   review: '',
 };
 
-// Convert the form state to the games.json shape
+// Convert the form state to the shape of a game file
 function toGame(form) {
   return {
     name: form.name.trim(),
@@ -32,54 +35,72 @@ function toGame(form) {
   };
 }
 
-// Sorted list of the distinct values of one field, for input suggestions
-function distinct(field) {
-  return [...new Set(jsonGames.map((game) => game[field]).filter(Boolean))].sort();
+// File name for a new game; adds the start year (or a number) if the name is taken
+function uniqueId(game) {
+  const ids = new Set(games.map((g) => g.id));
+  const base = slugify(game.name) || 'game';
+  if (!ids.has(base)) return base;
+  const year = game.playedStart && game.playedStart.slice(0, 4);
+  if (year && !ids.has(`${base}-${year}`)) return `${base}-${year}`;
+  let n = 2;
+  while (ids.has(`${base}-${n}`)) n += 1;
+  return `${base}-${n}`;
 }
 
-// Shows the entry as games.json text, for pasting while there is no database
-function JsonDialog({ json, note, onKeepEditing, onDone }) {
+// Sorted list of the distinct values of one field, for input suggestions
+function distinct(field) {
+  return [...new Set(games.map((game) => game[field]).filter(Boolean))].sort();
+}
+
+// Shows the new file and a link that opens it, already filled in, on GitHub
+function CommitDialog({ path, content, onKeepEditing, onDone }) {
   const dialogRef = useRef(null);
   const [copied, setCopied] = useState(false);
-  const text = `${json},`;
+  const url = newFileUrl(path, content);
+  const tooLong = url.length > MAX_URL_LENGTH;
+
+  useEffect(() => {
+    // React StrictMode runs effects twice in dev, and showModal throws if already open
+    if (!dialogRef.current.open) dialogRef.current.showModal();
+  }, []);
 
   const copy = async () => {
     try {
-      await navigator.clipboard.writeText(text);
+      await navigator.clipboard.writeText(content);
       setCopied(true);
     } catch {
       setCopied(false);
     }
   };
 
-  useEffect(() => {
-    // React StrictMode runs effects twice in dev, and showModal throws if already open
-    if (!dialogRef.current.open) dialogRef.current.showModal();
-    copy();
-    // Run once when the dialog opens
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   return (
     <dialog ref={dialogRef} className="json-dialog" onCancel={onKeepEditing}>
-      <h3>Paste into games.json</h3>
-      {note && <p className="json-dialog-note">{note}</p>}
+      <h3>Commit on GitHub</h3>
       <p className="json-dialog-hint">
-        {copied ? 'Copied to your clipboard. ' : ''}
-        Paste it on the line after the opening <code>[</code> in <code>src/media/games.json</code>,
-        then deploy.
+        Click <strong>Open on GitHub</strong>, then <strong>Commit changes</strong>. The site
+        updates about 2 minutes later.
       </p>
-      <pre className="json-output">{text}</pre>
+      {tooLong && (
+        <p className="json-dialog-note">
+          This entry is long, and GitHub may not accept it in a link. If the file opens empty,
+          copy the JSON and paste it in.
+        </p>
+      )}
+      <p className="json-dialog-path"><code>{path}</code></p>
+      <pre className="json-output">{content}</pre>
       <div className="json-dialog-actions">
         <button type="button" className="dialog-button secondary" onClick={onKeepEditing}>
           Keep editing
         </button>
         <button type="button" className="dialog-button secondary" onClick={copy}>
-          {copied ? 'Copied' : 'Copy'}
+          {copied ? 'Copied' : 'Copy JSON'}
         </button>
-        <button type="button" className="dialog-button primary" onClick={onDone}>
+        <button type="button" className="dialog-button secondary" onClick={onDone}>
           Done, clear form
         </button>
+        <a className="dialog-button primary" href={url} target="_blank" rel="noreferrer">
+          Open on GitHub ↗
+        </a>
       </div>
     </dialog>
   );
@@ -87,10 +108,9 @@ function JsonDialog({ json, note, onKeepEditing, onDone }) {
 
 export default function AddGame() {
   const [form, setForm] = useState(EMPTY_FORM);
-  const [submitting, setSubmitting] = useState(false);
-  const [status, setStatus] = useState(null); // { type: 'success' | 'error', message }
+  const [status, setStatus] = useState(null); // { type: 'error', message }
   const [imageFailed, setImageFailed] = useState(false);
-  const [dialog, setDialog] = useState(null); // { json, note } while the JSON dialog is open
+  const [dialog, setDialog] = useState(null); // { path, content } while the dialog is open
 
   const platforms = useMemo(() => distinct('platform'), []);
   const developers = useMemo(() => distinct('developer'), []);
@@ -103,7 +123,7 @@ export default function AddGame() {
     if (field === 'imageUrl') setImageFailed(false);
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     setStatus(null);
 
@@ -112,23 +132,10 @@ export default function AddGame() {
       return;
     }
 
-    const json = JSON.stringify(game, null, 2);
-    if (!DB_ENABLED) {
-      setDialog({ json });
-      return;
-    }
-
-    setSubmitting(true);
-    try {
-      await insertGame(game);
-      setStatus({ type: 'success', message: `Added "${game.name}".` });
-      setForm(EMPTY_FORM);
-    } catch (error) {
-      console.error('Error adding game:', error);
-      setDialog({ json, note: `Could not save to the database (${error.message}).` });
-    } finally {
-      setSubmitting(false);
-    }
+    setDialog({
+      path: `${GAMES_DIR}/${uniqueId(game)}.json`,
+      content: `${JSON.stringify(game, null, 2)}\n`,
+    });
   };
 
   const clearForm = () => {
@@ -142,9 +149,9 @@ export default function AddGame() {
       <header className="add-game-header">
         <div>
           <h2>Add a Game</h2>
-          <p className="add-game-subtitle">New entries show on the review page.</p>
+          <p className="add-game-subtitle">Each game is saved as a file in the site's GitHub repo.</p>
         </div>
-        <Link to="/media-reviews" className="back-link">View reviews →</Link>
+        <Link to="/media-reviews/games" className="back-link">View reviews →</Link>
       </header>
 
       {status && <div className={`add-game-status ${status.type}`}>{status.message}</div>}
@@ -250,8 +257,8 @@ export default function AddGame() {
             />
           </div>
 
-          <button type="submit" className="add-game-submit" disabled={submitting}>
-            {submitting ? 'Saving...' : DB_ENABLED ? 'Add Game' : 'Add Game (get JSON)'}
+          <button type="submit" className="add-game-submit">
+            Add Game
           </button>
         </form>
 
@@ -268,9 +275,9 @@ export default function AddGame() {
       </div>
 
       {dialog && (
-        <JsonDialog
-          json={dialog.json}
-          note={dialog.note}
+        <CommitDialog
+          path={dialog.path}
+          content={dialog.content}
           onKeepEditing={() => setDialog(null)}
           onDone={clearForm}
         />

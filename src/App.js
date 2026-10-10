@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import logo from './assets/calvin-hobbes.jpg';
 import './App.css';
-import { Routes, Route, Link } from 'react-router-dom';
+import { Routes, Route, Link, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import LotrMap from './lotr/LotrMap';
-import MediaReviews from './media/MediaReviews';
+import MediaReviews, { ComingSoon } from './media/MediaReviews';
+import GameReviews from './media/GameReviews';
 import AddGame from './media/AddGame';
 import ExerciseTracker from './exercise/ExerciseTracker';
 import ExerciseStats from './exercise/ExerciseStats';
@@ -106,9 +107,15 @@ function AppContent() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="lotr-map" element={<LotrMap />} />
-        <Route path="media-reviews" element={<MediaReviews />} />
+        <Route path="media-reviews" element={<MediaReviews />}>
+          <Route index element={<Navigate to="games" replace />} />
+          <Route path="games" element={<GameReviews />} />
+          <Route path="books" element={<ComingSoon icon="📚" title="Book reviews" />} />
+          <Route path="shows" element={<ComingSoon icon="🎬" title="Movie and show reviews" />} />
+        </Route>
         {/* Not linked in the nav on purpose */}
-        <Route path="media-reviews/new" element={<AddGame />} />
+        <Route path="media-reviews/games/new" element={<AddGame />} />
+        <Route path="media-reviews/new" element={<Navigate to="/media-reviews/games/new" replace />} />
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
         <Route

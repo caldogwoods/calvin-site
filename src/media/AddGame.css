@@ -247,7 +247,9 @@
 }
 
 .dialog-button {
+  display: inline-block;
   padding: 9px 16px;
+  text-decoration: none;
   border: none;
   border-radius: 8px;
   font: inherit;
@@ -273,6 +275,18 @@
 
 .dialog-button.primary:hover {
   opacity: 0.9;
+}
+
+.json-dialog-path {
+  margin: 12px 0 0;
+  font-size: 13px;
+  word-break: break-all;
+}
+
+.json-dialog-path code {
+  padding: 2px 6px;
+  background: #f0f0f6;
+  border-radius: 4px;
 }
 
 .json-output {
