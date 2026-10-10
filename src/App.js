@@ -5,6 +5,7 @@ import { Routes, Route, Link } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import LotrMap from './lotr/LotrMap';
 import MediaReviews from './media/MediaReviews';
+import AddGame from './media/AddGame';
 import ExerciseTracker from './exercise/ExerciseTracker';
 import ExerciseStats from './exercise/ExerciseStats';
 import Login from './components/Login';
@@ -106,6 +107,8 @@ function AppContent() {
         <Route path="/" element={<Home />} />
         <Route path="lotr-map" element={<LotrMap />} />
         <Route path="media-reviews" element={<MediaReviews />} />
+        {/* Not linked in the nav on purpose */}
+        <Route path="media-reviews/new" element={<AddGame />} />
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
         <Route
