@@ -18,7 +18,7 @@ function Home() {
       <header className="App-header">
         <img src={logo} alt="calvin and hobbes" />
         <p>
-          Testing GitHub Pages for Calvin Woods.
+          A personal site by Calvin Woods.
         </p>
       </header>
     </div>
@@ -66,9 +66,9 @@ function Navigation() {
 
         <div className={`nav-links ${mobileMenuOpen ? 'mobile-open' : ''}`}>
           <Link to="." onClick={closeMenu}>Home</Link>
-          <Link to="lotr-map" onClick={closeMenu}>LOTR Map</Link>
           <Link to="media-reviews" onClick={closeMenu}>Media Reviews</Link>
           <Link to="exercise-tracker" onClick={closeMenu}>Exercise Tracker</Link>
+          {/* <Link to="lotr-map" onClick={closeMenu}>LOTR Map</Link> */}
           {user ? (
             <div className="nav-account-wrapper" ref={accountMenuRef}>
               <button onClick={toggleAccountMenu} className="nav-account-btn">
