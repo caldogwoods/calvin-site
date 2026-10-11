@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect, useCallback } from 'react';
+import React, { useRef, useState, useEffect, useCallback, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import './LotrMap.css';
 // map assets
@@ -10,20 +10,20 @@ import middleEarthMap from '../assets/middle-earth-detailed.jpg';
 
 const ERAS = ['First Age', 'Second Age', 'Third Age', 'Fourth Age', 'Latter Ages'];
 
+// Map images per era. Replace placeholders by adding images to src/assets and
+// importing them here.
+const maps = [
+  firstAgeMap, // First Age
+  secondAgeMap, // Second Age (placeholder)
+  thirdAgeMap, // Third Age (placeholder)
+  fourthAgeMap, // Fourth Age (placeholder)
+  middleEarthMap, // Latter Ages (placeholder)
+];
+
 export default function LotrMap() {
   const [selected, setSelected] = useState(0);
   const trackRef = useRef(null);
   const handleRef = useRef(null);
-
-  // Map images per era. Replace placeholders by adding images to src/assets and
-  // importing them here.
-  const maps = [
-    firstAgeMap, // First Age
-    secondAgeMap, // Second Age (placeholder)
-    thirdAgeMap, // Third Age (placeholder)
-    fourthAgeMap, // Fourth Age (placeholder)
-    middleEarthMap, // Latter Ages (placeholder)
-  ];
 
   const [imageSrc, setImageSrc] = useState(maps[0]);
 
@@ -31,14 +31,12 @@ export default function LotrMap() {
     setImageSrc(maps[selected]);
   }, [selected]);
 
-  const positionsForNotches = useCallback(() => {
+  const positions = useMemo(() => {
     const count = ERAS.length;
     return Array.from({ length: count }, (_, i) => (i / (count - 1)) * 100);
   }, []);
 
-  const positions = positionsForNotches();
-
-  const indexForClientX = (clientX) => {
+  const indexForClientX = useCallback((clientX) => {
     const el = trackRef.current;
     if (!el) return 0;
     const rect = el.getBoundingClientRect();
@@ -56,7 +54,7 @@ export default function LotrMap() {
       }
     });
     return best;
-  };
+  }, [positions]);
 
   useEffect(() => {
     let onMove = null;
@@ -97,7 +95,7 @@ export default function LotrMap() {
       if (onUp) document.removeEventListener('pointerup', onUp);
       document.body.style.userSelect = '';
     };
-  }, [positions]);
+  }, [indexForClientX]);
 
   return (
     <div className="lotr-map-container">

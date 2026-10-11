@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import './Auth.css';
 
 export default function Login() {
@@ -10,6 +10,7 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const { signIn } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -20,7 +21,9 @@ export default function Login() {
       // Convert username to email format for Supabase
       const email = `${username}@local.app`;
       await signIn(email, password);
-      navigate('/exercise-tracker');
+      // Go back to the page that sent the user here, if there is one
+      const from = location.state?.from;
+      navigate(from ? `${from.pathname}${from.search}` : '/exercise-tracker', { replace: true });
     } catch (error) {
       setError('Failed to sign in: ' + error.message);
     } finally {

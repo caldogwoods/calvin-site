@@ -1,15 +1,18 @@
 import React, { useState } from 'react';
 import logo from './assets/calvin-hobbes.jpg';
 import './App.css';
-import { Routes, Route, Link } from 'react-router-dom';
+import { Routes, Route, Link, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import LotrMap from './lotr/LotrMap';
-import MediaReviews from './media/MediaReviews';
+import MediaReviews, { ComingSoon } from './media/MediaReviews';
+import GameReviews from './media/GameReviews';
+import AddReview from './media/AddReview';
 import ExerciseTracker from './exercise/ExerciseTracker';
 import ExerciseStats from './exercise/ExerciseStats';
 import Login from './components/Login';
 import Register from './components/Register';
 import ProtectedRoute from './components/ProtectedRoute';
+import AdminRoute from './components/AdminRoute';
 
 function Home() {
   return (
@@ -17,7 +20,7 @@ function Home() {
       <header className="App-header">
         <img src={logo} alt="calvin and hobbes" />
         <p>
-          Testing GitHub Pages for Calvin Woods.
+          A personal site by Calvin Woods.
         </p>
       </header>
     </div>
@@ -65,9 +68,9 @@ function Navigation() {
 
         <div className={`nav-links ${mobileMenuOpen ? 'mobile-open' : ''}`}>
           <Link to="." onClick={closeMenu}>Home</Link>
-          <Link to="lotr-map" onClick={closeMenu}>LOTR Map</Link>
           <Link to="media-reviews" onClick={closeMenu}>Media Reviews</Link>
           <Link to="exercise-tracker" onClick={closeMenu}>Exercise Tracker</Link>
+          {/* <Link to="lotr-map" onClick={closeMenu}>LOTR Map</Link> */}
           {user ? (
             <div className="nav-account-wrapper" ref={accountMenuRef}>
               <button onClick={toggleAccountMenu} className="nav-account-btn">
@@ -105,7 +108,21 @@ function AppContent() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="lotr-map" element={<LotrMap />} />
-        <Route path="media-reviews" element={<MediaReviews />} />
+        <Route path="media-reviews" element={<MediaReviews />}>
+          <Route index element={<Navigate to="games" replace />} />
+          <Route path="games" element={<GameReviews />} />
+          <Route path="books" element={<ComingSoon icon="📚" title="Book reviews" />} />
+          <Route path="shows" element={<ComingSoon icon="🎬" title="Movie and show reviews" />} />
+        </Route>
+        <Route
+          path="media-reviews/new"
+          element={
+            <AdminRoute>
+              <AddReview />
+            </AdminRoute>
+          }
+        />
+        <Route path="media-reviews/games/new" element={<Navigate to="/media-reviews/new?type=games" replace />} />
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
         <Route

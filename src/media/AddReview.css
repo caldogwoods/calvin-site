@@ -1,0 +1,370 @@
+.add-review-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 32px 20px 48px;
+  color: #2d3142;
+}
+
+.add-review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.add-review-header h2 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.add-review-subtitle {
+  margin: 6px 0 0;
+  color: #6b7080;
+  font-size: 15px;
+}
+
+.add-review-header .back-link {
+  color: #667eea;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.add-review-header .back-link:hover {
+  text-decoration: underline;
+}
+
+/* Review type switch */
+.type-switch {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 4px;
+  margin-bottom: 20px;
+  background: #eef0fc;
+  border-radius: 10px;
+}
+
+.type-option {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 7px;
+  color: #4c5bd4;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+}
+
+.type-option:hover {
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.type-option.active {
+  background: white;
+  color: #2d3142;
+  font-weight: 600;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+}
+
+/* Keep the radio usable by keyboard and screen readers, but hide the dot */
+.type-option input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+.type-option:focus-within {
+  outline: 2px solid #667eea;
+  outline-offset: 1px;
+}
+
+.add-review-status {
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-size: 14px;
+}
+
+.add-review-status.success {
+  background: #e6f7ee;
+  color: #1f8a4c;
+}
+
+.add-review-status.error {
+  background: #fdecec;
+  color: #c0392b;
+}
+
+.add-review-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  gap: 24px;
+  align-items: start;
+}
+
+.add-review-card {
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+.add-review-card h3 {
+  margin: 0 0 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #6b7080;
+}
+
+.form-field {
+  margin-bottom: 18px;
+}
+
+.form-field label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #4a4e5e;
+}
+
+.form-field input,
+.form-field select,
+.form-field textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  border: 1px solid #dcdde6;
+  border-radius: 6px;
+  font: inherit;
+  font-size: 15px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-field textarea {
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.form-field input:focus,
+.form-field select:focus,
+.form-field textarea:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+}
+
+.form-field input:disabled {
+  background: #f4f4f8;
+  color: #9a9eae;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.form-row .form-field {
+  margin-bottom: 10px;
+}
+
+.form-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 18px;
+  font-size: 14px;
+  color: #4a4e5e;
+  cursor: pointer;
+}
+
+.add-review-submit {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font: inherit;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.add-review-submit:hover {
+  opacity: 0.9;
+}
+
+.add-review-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Preview */
+.preview-cover {
+  display: flex;
+  justify-content: center;
+}
+
+.preview-cover img,
+.preview-placeholder {
+  width: 150px;
+  height: 200px;
+  border-radius: 8px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+}
+
+.preview-cover img {
+  object-fit: cover;
+}
+
+.preview-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  box-sizing: border-box;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-size: 40px;
+  text-align: center;
+}
+
+.preview-placeholder.failed {
+  font-size: 14px;
+}
+
+/* JSON dialog */
+.json-dialog {
+  width: min(560px, calc(100vw - 32px));
+  max-height: calc(100vh - 64px);
+  box-sizing: border-box;
+  padding: 24px;
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+  color: #2d3142;
+}
+
+.json-dialog::backdrop {
+  background: rgba(45, 49, 66, 0.45);
+}
+
+.json-dialog h3 {
+  margin: 0 0 8px;
+  font-size: 20px;
+}
+
+.json-dialog-note {
+  margin: 0 0 8px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: #fdecec;
+  color: #c0392b;
+  font-size: 14px;
+}
+
+.json-dialog-hint {
+  margin: 0;
+  color: #6b7080;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.json-dialog-hint code {
+  padding: 1px 5px;
+  background: #f0f0f6;
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+.json-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.dialog-button {
+  display: inline-block;
+  padding: 9px 16px;
+  text-decoration: none;
+  border: none;
+  border-radius: 8px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s, background 0.2s;
+}
+
+.dialog-button.secondary {
+  background: #eef0fc;
+  color: #4c5bd4;
+}
+
+.dialog-button.secondary:hover {
+  background: #e0e4fa;
+}
+
+.dialog-button.primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.dialog-button.primary:hover {
+  opacity: 0.9;
+}
+
+.json-dialog-path {
+  margin: 12px 0 0;
+  font-size: 13px;
+  word-break: break-all;
+}
+
+.json-dialog-path code {
+  padding: 2px 6px;
+  background: #f0f0f6;
+  border-radius: 4px;
+}
+
+.json-output {
+  max-height: 50vh;
+  overflow-y: auto;
+  margin: 12px 0 0;
+  padding: 12px;
+  background: #f7f7fb;
+  border-radius: 6px;
+  font-size: 12px;
+  line-height: 1.5;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+@media (max-width: 768px) {
+  .add-review-container {
+    padding: 20px 16px 32px;
+  }
+
+  .add-review-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .add-review-grid {
+    grid-template-columns: 1fr;
+  }
+}
