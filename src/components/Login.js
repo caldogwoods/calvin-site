@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { returnPath } from './authRedirect';
 import './Auth.css';
 
 export default function Login() {
@@ -21,9 +22,7 @@ export default function Login() {
       // Convert username to email format for Supabase
       const email = `${username}@local.app`;
       await signIn(email, password);
-      // Go back to the page that sent the user here, if there is one
-      const from = location.state?.from;
-      navigate(from ? `${from.pathname}${from.search}` : '/exercise-tracker', { replace: true });
+      navigate(returnPath(location), { replace: true });
     } catch (error) {
       setError('Failed to sign in: ' + error.message);
     } finally {
@@ -64,7 +63,7 @@ export default function Login() {
           </button>
         </form>
         <p className="auth-link">
-          Don't have an account? <a href="#/register">Register here</a>
+          Don't have an account? <Link to="/register" state={location.state}>Register here</Link>
         </p>
       </div>
     </div>

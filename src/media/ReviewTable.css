@@ -1,6 +1,6 @@
 .reviews-subtitle {
   margin: 0 0 16px;
-  color: #6b7080;
+  color: var(--text-muted);
   font-size: 15px;
 }
 
@@ -19,8 +19,8 @@
 
 /* Header */
 .reviews-table thead th {
-  background: #f7f7fb;
-  border-bottom: 2px solid #667eea;
+  background: var(--surface-tint);
+  border-bottom: 2px solid var(--accent);
   padding: 0;
   text-align: left;
 }
@@ -38,18 +38,18 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: #6b7080;
+  color: var(--text-muted);
   cursor: pointer;
   transition: color 0.2s;
 }
 
 .sort-button:hover,
 .sort-button.active {
-  color: #667eea;
+  color: var(--accent);
 }
 
 .sort-button:focus-visible {
-  outline: 2px solid #667eea;
+  outline: 2px solid var(--accent);
   outline-offset: -2px;
 }
 
@@ -73,11 +73,11 @@
 }
 
 .reviews-table tbody tr:hover {
-  background: #f9f9fe;
+  background: var(--surface-hover);
 }
 
 .reviews-table tbody tr + tr td {
-  border-top: 1px solid #ececf3;
+  border-top: 1px solid var(--border);
 }
 
 .reviews-table td {
@@ -95,12 +95,12 @@
 }
 
 @keyframes linked-row {
-  0%, 30% { background: #e4e8fd; }
-  100% { background: #f7f7fb; }
+  0%, 30% { background: var(--accent-soft-hover); }
+  100% { background: var(--surface-tint); }
 }
 
 .reviews-table tbody tr.review-row.open {
-  background: #f7f7fb;
+  background: var(--surface-tint);
 }
 
 .row-toggle {
@@ -117,7 +117,7 @@
 }
 
 .row-toggle:focus-visible {
-  outline: 2px solid #667eea;
+  outline: 2px solid var(--accent);
   outline-offset: 4px;
   border-radius: 2px;
 }
@@ -125,7 +125,7 @@
 .row-chevron {
   display: inline-block;
   width: 10px;
-  color: #9a9eae;
+  color: var(--text-subtle);
   font-size: 20px;
   line-height: 1;
   transition: transform 0.2s, color 0.2s;
@@ -133,7 +133,7 @@
 
 .review-row:hover .row-chevron,
 .review-row.open .row-chevron {
-  color: #667eea;
+  color: var(--accent);
 }
 
 .review-row.open .row-chevron {
@@ -149,7 +149,7 @@
 .reviews-table tbody tr.details-row td {
   border-top: none;
   padding: 0 16px 20px 36px;
-  background: #f7f7fb;
+  background: var(--surface-tint);
   cursor: default;
 }
 
@@ -159,7 +159,7 @@
   gap: 24px;
   padding: 16px 20px;
   background: white;
-  border: 1px solid #ececf3;
+  border: 1px solid var(--border);
   border-radius: 10px;
   animation: details-in 0.2s ease-out;
 }
@@ -180,7 +180,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: #9a9eae;
+  color: var(--text-subtle);
 }
 
 .details-meta dd {
@@ -201,7 +201,7 @@
 .details-edit-link {
   grid-column: 1 / -1;
   justify-self: end;
-  color: #667eea;
+  color: var(--accent);
   font-size: 13px;
   font-weight: 500;
   text-decoration: none;
@@ -215,8 +215,8 @@
   display: inline-block;
   padding: 3px 10px;
   border-radius: 999px;
-  background: #eef0fc;
-  color: #4c5bd4;
+  background: var(--accent-soft);
+  color: var(--accent-strong);
   font-size: 13px;
   font-weight: 500;
   white-space: nowrap;
@@ -236,7 +236,7 @@
 }
 
 .muted {
-  color: #9a9eae;
+  color: var(--text-subtle);
   font-size: 14px;
 }
 
@@ -268,7 +268,7 @@
 }
 
 .score-great { background: #e6f7ee; color: #1f8a4c; }
-.score-good  { background: #eef0fc; color: #4c5bd4; }
+.score-good  { background: var(--accent-soft); color: var(--accent-strong); }
 .score-mixed { background: #fff4e0; color: #b26a00; }
 .score-poor  { background: #fdecec; color: #c0392b; }
 
@@ -292,7 +292,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--gradient);
   font-size: 24px;
 }
 
@@ -337,14 +337,14 @@
   }
 
   .reviews-table tbody tr + tr {
-    border-top: 1px solid #ececf3;
+    border-top: 1px solid var(--border);
   }
 
   .reviews-table tbody tr.details-row {
     display: block;
     padding: 0 16px 16px;
     border-top: none;
-    background: #f7f7fb;
+    background: var(--surface-tint);
   }
 
   .reviews-table tbody tr.details-row td {
@@ -366,7 +366,7 @@
     content: attr(data-label);
     display: inline-block;
     width: 80px;
-    color: #9a9eae;
+    color: var(--text-subtle);
     font-size: 12px;
     text-transform: uppercase;
     letter-spacing: 0.05em;

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import logo from './assets/calvin-hobbes.jpg';
 import './App.css';
-import { Routes, Route, Link, Navigate } from 'react-router-dom';
+import { Routes, Route, Link, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import LotrMap from './lotr/LotrMap';
 import MediaReviews from './media/MediaReviews';
@@ -16,6 +16,7 @@ import PlayHistory from './play/PlayHistory';
 import PsnGameTrophies from './play/PsnGameTrophies';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminRoute from './components/AdminRoute';
+import PaletteSwitcher from './components/PaletteSwitcher';
 
 function Home() {
   return (
@@ -32,6 +33,7 @@ function Home() {
 
 function Navigation() {
   const { user, signOut } = useAuth();
+  const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [accountMenuOpen, setAccountMenuOpen] = useState(false);
   const accountMenuRef = React.useRef(null);
@@ -97,7 +99,14 @@ function Navigation() {
               )}
             </div>
           ) : (
-            <Link to="login" onClick={closeMenu}>Login</Link>
+            // Come back to this page after logging in (unless already on login/register)
+            <Link
+              to="login"
+              state={['/login', '/register'].includes(location.pathname) ? location.state : { from: location }}
+              onClick={closeMenu}
+            >
+              Login
+            </Link>
           )}
         </div>
       </div>
@@ -106,9 +115,12 @@ function Navigation() {
 }
 
 function AppContent() {
+  const { isAdmin } = useAuth();
   return (
     <div>
       <Navigation />
+      {/* Palette preview (src/theme.css): always in development, and for the admin on the live site */}
+      {(process.env.NODE_ENV === 'development' || isAdmin) && <PaletteSwitcher />}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="lotr-map" element={<LotrMap />} />

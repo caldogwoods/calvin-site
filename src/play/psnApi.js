@@ -21,3 +21,10 @@ export const getPsnGames = (refresh = false) => callPsn({ action: 'games', refre
 export const linkPsn = (npsso) => callPsn({ action: 'link', npsso });
 export const unlinkPsn = () => callPsn({ action: 'unlink' });
 export const getPsnTrophies = (titleId, refresh = false) => callPsn({ action: 'trophies', titleId, refresh });
+
+// Debugging: the unchanged PSN responses (game list, or one game's trophies). Not saved.
+export async function getPsnRaw(titleId) {
+  const result = await callPsn({ action: 'raw', titleId });
+  if (result.status !== 'ok') throw new Error(`PlayStation account is ${result.status}.`);
+  return result.raw;
+}

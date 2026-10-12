@@ -342,7 +342,7 @@ export default function ExerciseStats() {
                 <YAxis />
                 <Tooltip />
                 <Legend />
-                <Line type="monotone" dataKey="total" stroke="#667eea" strokeWidth={2} name="Total Points" />
+                <Line type="monotone" dataKey="total" stroke="var(--accent)" strokeWidth={2} name="Total Points" />
               </LineChart>
             </ResponsiveContainer>
           ) : (
@@ -361,7 +361,7 @@ export default function ExerciseStats() {
                 <YAxis />
                 <Tooltip />
                 <Legend />
-                <Bar dataKey="points" fill="#667eea" name="Points" />
+                <Bar dataKey="points" fill="var(--accent)" name="Points" />
               </BarChart>
             </ResponsiveContainer>
           ) : (

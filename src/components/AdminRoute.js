@@ -33,7 +33,7 @@ export default function AdminRoute({ children }) {
           <h2>No access</h2>
           <p>This page is only for the site admin.</p>
           {/* Shown so the admin can copy it into REACT_APP_ADMIN_USER_IDS */}
-          <p style={{ fontSize: 13, color: '#6b7080', wordBreak: 'break-all' }}>
+          <p style={{ fontSize: 13, color: 'var(--text-muted)', wordBreak: 'break-all' }}>
             Your user id: <code>{user.id}</code>
           </p>
           <div className="auth-link">

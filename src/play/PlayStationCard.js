@@ -1,7 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { getPsnGames, linkPsn, unlinkPsn } from './psnApi';
+import DebugPanel from '../components/DebugPanel';
+import { getPsnGames, getPsnRaw, linkPsn, unlinkPsn } from './psnApi';
 import { clearCache, readCache, writeCache } from './psnCache';
 
 const PAGE_SIZE = 25;
@@ -198,7 +199,7 @@ function GameList({ games }) {
 }
 
 export default function PlayStationCard() {
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
   // Response from the psn edge function; starts from this browser's saved copy
   const [data, setData] = useState(() => readCache(user.id, 'games'));
   const [loadError, setLoadError] = useState('');
@@ -325,6 +326,7 @@ export default function PlayStationCard() {
           <button type="button" className="ph-text-button danger" onClick={disconnect} disabled={!!busy}>
             {busy === 'disconnect' ? 'Disconnecting…' : 'Disconnect'}
           </button>
+          {isAdmin && <DebugPanel name="psn-games" saved={data} loadRaw={() => getPsnRaw()} />}
         </div>
       </div>
 

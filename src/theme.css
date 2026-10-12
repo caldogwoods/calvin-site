@@ -1,0 +1,103 @@
+/*
+ * Site colors: the one place to change the color scheme.
+ *
+ * Every page uses these variables. To change the colors:
+ *   - Site palette: data-palette="..." on <html> in public/index.html (now
+ *     "forest"). Without it, the site uses "indigo", the values in :root below.
+ *   - Try a palette: use the "Palette" picker at the bottom left. It shows in
+ *     `npm start`, and on the live site when the admin is signed in. A pick is a
+ *     preview in that browser only. In development, ?palette=ember before the #
+ *     in the URL also works.
+ *   - Make a new palette: copy one of the [data-palette] blocks, change the
+ *     values, and add its name to PALETTES in src/components/PaletteSwitcher.js.
+ *   - Fast experiments: in the browser dev tools, select <html> and edit the
+ *     variables under :root. The page changes as you type.
+ *
+ * A palette only needs the "Brand" values; the neutrals are optional.
+ */
+
+/* Indigo: blue to purple (the base values; used when no palette is set) */
+:root {
+  /* Brand */
+  --accent: #667eea;              /* buttons, focus rings, active tabs, links */
+  --accent-2: #764ba2;            /* second color of the gradients (nav bar, buttons) */
+  --accent-strong: #4c5bd4;       /* accent text on light backgrounds */
+  --accent-hover: #5568d3;        /* solid accent buttons on hover */
+  --accent-soft: #eef0fc;         /* chips, segmented controls, light accent backgrounds */
+  --accent-soft-hover: #e0e4fa;   /* hover on accent-soft, row highlight */
+  --surface-tint: #f7f7fb;        /* table headers, open rows, panels */
+  --surface-hover: #f9f9fe;       /* row hover */
+
+  /* Neutrals */
+  --text: #2d3142;                /* headings and main text */
+  --text-body: #4a4e5e;           /* labels and secondary text */
+  --text-muted: #6b7080;          /* subtitles, descriptions */
+  --text-subtle: #9a9eae;         /* hints, placeholders, small labels */
+  --border: #ececf3;              /* lines between rows */
+  --border-strong: #dcdde6;       /* input borders, card dividers */
+
+  /* Made from the values above; no need to change */
+  --gradient: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+  --accent-ring: color-mix(in srgb, var(--accent) 15%, transparent);
+  --accent-shadow: color-mix(in srgb, var(--accent) 35%, transparent);
+}
+
+/* Blue: sky to royal blue */
+:root[data-palette='ocean'] {
+  --accent: #0ea5e9;
+  --accent-2: #2563eb;
+  --accent-strong: #0369a1;
+  --accent-hover: #0284c7;
+  --accent-soft: #e0f2fe;
+  --accent-soft-hover: #bae6fd;
+  --surface-tint: #f4f9fc;
+  --surface-hover: #f6fbfe;
+}
+
+/* Green: emerald to deep teal */
+:root[data-palette='forest'] {
+  --accent: #10b981;
+  --accent-2: #0f766e;
+  --accent-strong: #047857;
+  --accent-hover: #059669;
+  --accent-soft: #e3f5ee;
+  --accent-soft-hover: #c6ead9;
+  --surface-tint: #f5faf8;
+  --surface-hover: #f7fcfa;
+}
+
+/* Warm: orange to red */
+:root[data-palette='ember'] {
+  --accent: #f97316;
+  --accent-2: #dc2626;
+  --accent-strong: #c2410c;
+  --accent-hover: #ea580c;
+  --accent-soft: #fff0e3;
+  --accent-soft-hover: #fedcc2;
+  --surface-tint: #fcf8f5;
+  --surface-hover: #fffaf6;
+}
+
+/* Pink to violet */
+:root[data-palette='rose'] {
+  --accent: #ec4899;
+  --accent-2: #8b5cf6;
+  --accent-strong: #be185d;
+  --accent-hover: #db2777;
+  --accent-soft: #fce7f3;
+  --accent-soft-hover: #fbcfe8;
+  --surface-tint: #fcf7fa;
+  --surface-hover: #fefafc;
+}
+
+/* Gray-blue, no strong color */
+:root[data-palette='slate'] {
+  --accent: #475569;
+  --accent-2: #1e293b;
+  --accent-strong: #334155;
+  --accent-hover: #334155;
+  --accent-soft: #eef1f5;
+  --accent-soft-hover: #dde3ea;
+  --surface-tint: #f7f8fa;
+  --surface-hover: #f9fafb;
+}

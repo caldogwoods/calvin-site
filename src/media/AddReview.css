@@ -2,7 +2,7 @@
   max-width: 1000px;
   margin: 0 auto;
   padding: 32px 20px 48px;
-  color: #2d3142;
+  color: var(--text);
 }
 
 .add-review-header {
@@ -22,12 +22,12 @@
 
 .add-review-subtitle {
   margin: 6px 0 0;
-  color: #6b7080;
+  color: var(--text-muted);
   font-size: 15px;
 }
 
 .add-review-header .back-link {
-  color: #667eea;
+  color: var(--accent);
   text-decoration: none;
   font-weight: 500;
 }
@@ -43,7 +43,7 @@
   gap: 4px;
   padding: 4px;
   margin-bottom: 20px;
-  background: #eef0fc;
+  background: var(--accent-soft);
   border-radius: 10px;
 }
 
@@ -54,7 +54,7 @@
   gap: 6px;
   padding: 8px 16px;
   border-radius: 7px;
-  color: #4c5bd4;
+  color: var(--accent-strong);
   font-size: 15px;
   font-weight: 500;
   cursor: pointer;
@@ -67,7 +67,7 @@
 
 .type-option.active {
   background: white;
-  color: #2d3142;
+  color: var(--text);
   font-weight: 600;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
 }
@@ -81,7 +81,7 @@
 }
 
 .type-option:focus-within {
-  outline: 2px solid #667eea;
+  outline: 2px solid var(--accent);
   outline-offset: 1px;
 }
 
@@ -98,8 +98,8 @@
 }
 
 .add-review-status.info {
-  background: #eef0fc;
-  color: #3d4ab8;
+  background: var(--accent-soft);
+  color: var(--accent-strong);
 }
 
 .add-review-status.error {
@@ -127,7 +127,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: #6b7080;
+  color: var(--text-muted);
 }
 
 .form-field {
@@ -139,7 +139,7 @@
   margin-bottom: 6px;
   font-size: 14px;
   font-weight: 500;
-  color: #4a4e5e;
+  color: var(--text-body);
 }
 
 .form-field input,
@@ -148,7 +148,7 @@
   width: 100%;
   box-sizing: border-box;
   padding: 10px 12px;
-  border: 1px solid #dcdde6;
+  border: 1px solid var(--border-strong);
   border-radius: 6px;
   font: inherit;
   font-size: 15px;
@@ -164,13 +164,13 @@
 .form-field select:focus,
 .form-field textarea:focus {
   outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-ring);
 }
 
 .form-field input:disabled {
   background: #f4f4f8;
-  color: #9a9eae;
+  color: var(--text-subtle);
 }
 
 .form-row {
@@ -189,14 +189,14 @@
   gap: 8px;
   margin-bottom: 18px;
   font-size: 14px;
-  color: #4a4e5e;
+  color: var(--text-body);
   cursor: pointer;
 }
 
 .add-review-submit {
   width: 100%;
   padding: 12px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--gradient);
   color: white;
   border: none;
   border-radius: 8px;
@@ -240,7 +240,7 @@
   justify-content: center;
   padding: 12px;
   box-sizing: border-box;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--gradient);
   color: white;
   font-size: 40px;
   text-align: center;
@@ -259,7 +259,7 @@
   border: none;
   border-radius: 12px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
-  color: #2d3142;
+  color: var(--text);
 }
 
 .json-dialog::backdrop {
@@ -282,7 +282,7 @@
 
 .json-dialog-hint {
   margin: 0;
-  color: #6b7080;
+  color: var(--text-muted);
   font-size: 14px;
   line-height: 1.5;
 }
@@ -316,16 +316,16 @@
 }
 
 .dialog-button.secondary {
-  background: #eef0fc;
-  color: #4c5bd4;
+  background: var(--accent-soft);
+  color: var(--accent-strong);
 }
 
 .dialog-button.secondary:hover {
-  background: #e0e4fa;
+  background: var(--accent-soft-hover);
 }
 
 .dialog-button.primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--gradient);
   color: white;
 }
 
@@ -350,7 +350,7 @@
   overflow-y: auto;
   margin: 12px 0 0;
   padding: 12px;
-  background: #f7f7fb;
+  background: var(--surface-tint);
   border-radius: 6px;
   font-size: 12px;
   line-height: 1.5;

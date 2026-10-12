@@ -9,6 +9,8 @@
 //                                         the saved trophies for one game, with the user's progress
 //   { "action": "trophies", "titleId": "...", "refresh": true }
 //                                         fetch that game's trophies from PSN now
+//   { "action": "raw" }                   debugging: the unchanged PSN game list (not saved)
+//   { "action": "raw", "titleId": "..." } debugging: the unchanged PSN trophy responses
 //
 // Data is fetched from PSN only when nothing is saved yet or the user asks for a
 // refresh (at most once every REFRESH_MINUTES per list). Every response has a
@@ -136,8 +138,9 @@ function durationToMinutes(duration: string | undefined): number | null {
   return Math.round(Number(days) * 1440 + Number(hours) * 60 + Number(minutes) + Number(seconds) / 60);
 }
 
-/** All PS4/PS5 games the account has played, most recently played first. */
-async function getPlayedGames(accessToken: string): Promise<PsnGame[]> {
+/** The unchanged PSN game list entries, all pages. */
+// deno-lint-ignore no-explicit-any
+async function getRawGameTitles(accessToken: string): Promise<any[]> {
   // deno-lint-ignore no-explicit-any
   const titles: any[] = [];
   let offset = 0;
@@ -156,8 +159,12 @@ async function getPlayedGames(accessToken: string): Promise<PsnGame[]> {
     if (!page.nextOffset || page.titles.length === 0) break;
     offset = page.nextOffset;
   }
+  return titles;
+}
 
-  return titles
+/** All PS4/PS5 games the account has played, most recently played first. */
+async function getPlayedGames(accessToken: string): Promise<PsnGame[]> {
+  return (await getRawGameTitles(accessToken))
     .map((title) => ({
       id: title.titleId,
       name: title.name,
@@ -186,10 +193,14 @@ const TROPHY_ORDER = ['platinum', 'gold', 'silver', 'bronze'];
  * Every trophy for one game (by game list title id, such as "PPSA01521_00"),
  * merged with the user's progress. Returns null if the game has no trophy list.
  */
-async function getGameTrophies(accessToken: string, titleId: string) {
+/**
+ * The unchanged PSN trophy responses for one game: the title lookup, and (if the
+ * game has a trophy list) the trophy definitions, the user's progress, and the groups.
+ */
+async function getRawTrophyResponses(accessToken: string, titleId: string) {
   const lookup = await psnGet(`${TROPHY_BASE_URL}/users/me/titles/trophyTitles?npTitleIds=${titleId}`, accessToken);
   const title = lookup.titles?.[0]?.trophyTitles?.[0];
-  if (!title) return null;
+  if (!title) return { lookup };
 
   const id = title.npCommunicationId;
   const service = `npServiceName=${title.npServiceName}`;
@@ -198,6 +209,13 @@ async function getGameTrophies(accessToken: string, titleId: string) {
     psnGet(`${TROPHY_BASE_URL}/users/me/npCommunicationIds/${id}/trophyGroups/all/trophies?${service}`, accessToken),
     psnGet(`${TROPHY_BASE_URL}/npCommunicationIds/${id}/trophyGroups?${service}`, accessToken),
   ]);
+  return { lookup, definitions, progress, groups };
+}
+
+async function getGameTrophies(accessToken: string, titleId: string) {
+  const { lookup, definitions, progress, groups } = await getRawTrophyResponses(accessToken, titleId);
+  if (!definitions) return null;
+  const title = lookup.titles[0].trophyTitles[0];
 
   // deno-lint-ignore no-explicit-any
   const earnedById = new Map(progress.trophies.map((t: any) => [t.trophyId, t]));
@@ -365,6 +383,28 @@ async function trophies(userId: string, titleId: unknown, refresh: boolean): Pro
   }
 }
 
+// Debugging: unchanged PSN responses for the signed-in user's own account. Not saved.
+async function raw(userId: string, titleId: unknown): Promise<ActionResult> {
+  if (titleId != null && (typeof titleId !== 'string' || !/^[A-Z]{4}\d{5}_\d{2}$/.test(titleId))) {
+    return { error: 'Unknown game.', httpStatus: 400 };
+  }
+  const { data: row, error } = await admin.from('psn_links').select('*').eq('user_id', userId).maybeSingle();
+  if (error) throw error;
+  if (!row) return { status: 'unlinked' };
+  try {
+    const accessToken = await getAccessToken(await decrypt(row.npsso_encrypted));
+    if (titleId) return { status: 'ok', raw: await getRawTrophyResponses(accessToken, titleId as string) };
+    const titles = await getRawGameTitles(accessToken);
+    return { status: 'ok', raw: { totalItemCount: titles.length, titles } };
+  } catch (err) {
+    if (err instanceof ExpiredTokenError) {
+      await admin.from('psn_links').update({ status: 'expired' }).eq('user_id', userId);
+      return { status: 'expired' };
+    }
+    throw err;
+  }
+}
+
 Deno.serve(async (request) => {
   const headers = corsHeaders(request);
   if (request.method === 'OPTIONS') return new Response('ok', { headers });
@@ -387,6 +427,10 @@ Deno.serve(async (request) => {
       }
       case 'trophies': {
         const { httpStatus, ...result } = await trophies(user.id, body.titleId, Boolean(body.refresh));
+        return json(result, httpStatus || 200);
+      }
+      case 'raw': {
+        const { httpStatus, ...result } = await raw(user.id, body.titleId);
         return json(result, httpStatus || 200);
       }
       case 'unlink': {

@@ -2,7 +2,8 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { findEntryByName } from '../media/mediaTypes';
-import { getPsnTrophies } from './psnApi';
+import DebugPanel from '../components/DebugPanel';
+import { getPsnRaw, getPsnTrophies } from './psnApi';
 import { readCache, writeCache } from './psnCache';
 import './PlayHistory.css';
 
@@ -18,6 +19,14 @@ const byName = (a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: 
 // Each sort has a default direction; `asc` compares in its natural order.
 // Values that are missing (not earned, no rarity) always go last.
 const SORTS = [
+  {
+    key: 'game',
+    label: 'Game order',
+    defaultDir: 'asc',
+    dirLabels: { asc: 'First to last', desc: 'Last to first' },
+    value: (t) => t.id,
+    compare: (a, b) => a - b,
+  },
   {
     key: 'earned',
     label: 'Date earned',
@@ -47,7 +56,7 @@ const SORTS = [
     label: 'Type',
     defaultDir: 'asc',
     dirLabels: { asc: 'Platinum first', desc: 'Bronze first' },
-    value: (t) => TYPE_ORDER.indexOf(t.type),
+    value: (t) => (TYPE_ORDER.includes(t.type) ? TYPE_ORDER.indexOf(t.type) : null),
     compare: (a, b) => a - b,
   },
 ];
@@ -116,19 +125,19 @@ function formatHours(minutes) {
 
 function sortTrophies(trophies, sortKey, dir) {
   const sort = SORTS.find((s) => s.key === sortKey);
-  const factor = dir === 'asc' ? 1 : -1;
-  return [...trophies].sort((a, b) => {
-    const av = sort.value(a);
-    const bv = sort.value(b);
-    const aMissing = av == null || av === -1;
-    const bMissing = bv == null || bv === -1;
-    if (aMissing !== bMissing) return aMissing ? 1 : -1;
-    if (!aMissing) {
-      const result = sort.compare(av, bv) * factor;
-      if (result) return result;
-    }
-    return byName(a, b);
-  });
+  const direction = dir === 'asc' ? 1 : -1;
+
+  const hasValue = (trophy) => sort.value(trophy) != null;
+  const byValue = (a, b) => sort.compare(sort.value(a), sort.value(b)) * direction;
+
+  const ranked = trophies.filter(hasValue).sort((a, b) => byValue(a, b) || byName(a, b));
+  const unranked = trophies.filter((trophy) => !hasValue(trophy)).sort(byName);
+  console.log("ranked trophies:", ranked);
+  console.log("unranked trophies:", unranked);
+  const sorted = [...ranked, ...unranked];
+
+  const isPlatinum = (trophy) => trophy.type === 'platinum';
+  return [...sorted.filter(isPlatinum), ...sorted.filter((trophy) => !isPlatinum(trophy))];
 }
 
 function TrophyRow({ trophy, groupName, reveal }) {
@@ -172,8 +181,8 @@ export default function PsnGameTrophies() {
   const [data, setData] = useState(() => readCache(user.id, cacheName));
   const [error, setError] = useState('');
   const [refreshing, setRefreshing] = useState(false);
-  const [sortKey, setSortKey] = useState('earned');
-  const [dir, setDir] = useState('desc');
+  const [sortKey, setSortKey] = useState(SORTS[0].key);
+  const [dir, setDir] = useState(SORTS[0].defaultDir);
   const [filter, setFilter] = useState('all');
   const [group, setGroup] = useState('all');
   const [reveal, setReveal] = useState(false);
@@ -335,23 +344,28 @@ export default function PsnGameTrophies() {
     <div className="play-history-container">
       <div className="tr-topbar">
         <Link to="/play-history" className="tr-back">← Play History</Link>
-        {existingReview ? (
-          <Link to={`/media-reviews/games?open=${existingReview.id}`} className="tr-review-button">
-            <span aria-hidden="true">★</span> View review
-          </Link>
-        ) : (
-          // The review form is admin-only, so only admins see this
-          isAdmin &&
-          (listGame || game) && (
-            <Link
-              to="/media-reviews/new?type=games"
-              state={{ prefill: reviewPrefill(listGame, game) }}
-              className="tr-review-button"
-            >
-              <span aria-hidden="true">✎</span> Write a review
+        <div className="tr-topbar-actions">
+          {isAdmin && (
+            <DebugPanel name={`psn-trophies-${titleId}`} saved={data} loadRaw={() => getPsnRaw(titleId)} />
+          )}
+          {existingReview ? (
+            <Link to={`/media-reviews/games?open=${existingReview.id}`} className="tr-review-button">
+              <span aria-hidden="true">★</span> View review
             </Link>
-          )
-        )}
+          ) : (
+            // The review form is admin-only, so only admins see this
+            isAdmin &&
+            (listGame || game) && (
+              <Link
+                to="/media-reviews/new?type=games"
+                state={{ prefill: reviewPrefill(listGame, game) }}
+                className="tr-review-button"
+              >
+                <span aria-hidden="true">✎</span> Write a review
+              </Link>
+            )
+          )}
+        </div>
       </div>
 
       <section className="play-history-card playstation">

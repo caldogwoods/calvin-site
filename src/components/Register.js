@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { returnPath } from './authRedirect';
 import './Auth.css';
 
 export default function Register() {
@@ -11,6 +12,7 @@ export default function Register() {
   const [loading, setLoading] = useState(false);
   const { signUp } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -29,7 +31,7 @@ export default function Register() {
       // Convert username to email format for Supabase
       const email = `${username}@local.app`;
       await signUp(email, password, username);
-      navigate('/exercise-tracker');
+      navigate(returnPath(location), { replace: true });
     } catch (error) {
       setError('Failed to create account: ' + error.message);
     } finally {
@@ -81,7 +83,7 @@ export default function Register() {
           </button>
         </form>
         <p className="auth-link">
-          Already have an account? <a href="#/login">Login here</a>
+          Already have an account? <Link to="/login" state={location.state}>Login here</Link>
         </p>
       </div>
     </div>

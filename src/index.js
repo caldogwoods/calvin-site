@@ -1,9 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { HashRouter } from 'react-router-dom';
+import './theme.css';
 import './index.css';
 import App from './App';
+import { initDevPalette } from './components/PaletteSwitcher';
 import reportWebVitals from './reportWebVitals';
+
+// Development only: apply the palette picked with the palette picker or ?palette=
+if (process.env.NODE_ENV === 'development') initDevPalette();
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
