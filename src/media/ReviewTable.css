@@ -89,6 +89,16 @@
   cursor: pointer;
 }
 
+/* Row opened from a link (?open=<id>): a short highlight so it is easy to find */
+.reviews-table tbody tr.review-row.linked {
+  animation: linked-row 2.4s ease-out;
+}
+
+@keyframes linked-row {
+  0%, 30% { background: #e4e8fd; }
+  100% { background: #f7f7fb; }
+}
+
 .reviews-table tbody tr.review-row.open {
   background: #f7f7fb;
 }

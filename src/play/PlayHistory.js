@@ -1,11 +1,7 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
+import PlayStationCard from './PlayStationCard';
 import './PlayHistory.css';
-
-const PLATFORMS = [
-  { key: 'playstation', name: 'PlayStation', icon: '🎮' },
-  { key: 'nintendo', name: 'Nintendo', icon: '🕹️' },
-];
 
 // This page is logged-in-only (see the route in App.js)
 export default function PlayHistory() {
@@ -17,15 +13,18 @@ export default function PlayHistory() {
       </header>
 
       <div className="play-history-grid">
-        {PLATFORMS.map((platform) => (
-          <section key={platform.key} className={`play-history-card ${platform.key}`}>
-            <h3>{platform.name}</h3>
-            <div className="play-history-empty">
-              <div className="play-history-empty-icon" aria-hidden="true">{platform.icon}</div>
-              <p>Coming soon</p>
-            </div>
-          </section>
-        ))}
+        <section className="play-history-card playstation">
+          <h3>PlayStation</h3>
+          <PlayStationCard />
+        </section>
+
+        <section className="play-history-card nintendo">
+          <h3>Nintendo</h3>
+          <div className="play-history-empty">
+            <div className="play-history-empty-icon" aria-hidden="true">🕹️</div>
+            <p>Coming soon</p>
+          </div>
+        </section>
       </div>
 
       <Outlet />

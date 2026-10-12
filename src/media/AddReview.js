@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, useLocation, useSearchParams } from 'react-router-dom';
 import { MEDIA_TYPES, TYPE_KEYS } from './mediaTypes';
 import { newFileUrl, slugify } from './github';
 import './AddReview.css';
@@ -218,9 +218,23 @@ export default function AddReview() {
   const type = TYPE_KEYS.includes(searchParams.get('type')) ? searchParams.get('type') : 'games';
   const config = MEDIA_TYPES[type];
 
+  // Other pages can open the form with known values in the link state:
+  // { prefill: { type, values, source } }, where values use the form's field keys
+  const prefill = useLocation().state?.prefill;
+
   // One form per type, so switching types does not lose what was typed
   const [forms, setForms] = useState(() =>
-    Object.fromEntries(TYPE_KEYS.map((key) => [key, emptyForm(key)]))
+    Object.fromEntries(
+      TYPE_KEYS.map((key) => {
+        const form = emptyForm(key);
+        if (prefill?.type === key) {
+          Object.entries(prefill.values).forEach(([field, value]) => {
+            if (field in form && value != null) form[field] = value;
+          });
+        }
+        return [key, form];
+      })
+    )
   );
   const [status, setStatus] = useState(null); // { type: 'error', message }
   const [imageFailed, setImageFailed] = useState(false);
@@ -290,6 +304,12 @@ export default function AddReview() {
           </label>
         ))}
       </div>
+
+      {prefill?.source && prefill.type === type && (
+        <div className="add-review-status info">
+          Some fields are filled in from your {prefill.source} data. Check them before you save.
+        </div>
+      )}
 
       {status && <div className={`add-review-status ${status.type}`}>{status.message}</div>}
 

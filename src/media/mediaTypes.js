@@ -195,3 +195,21 @@ export const MEDIA_TYPES = {
 };
 
 export const TYPE_KEYS = Object.keys(MEDIA_TYPES);
+
+// Lowercase, no ™/®/©, and only letters and numbers separated by single spaces,
+// so "ACE COMBAT™ 8: WINGS OF THEVE" matches "Ace Combat 8: Wings of Theve"
+export function normalizeTitle(name) {
+  return (name || '')
+    .toLowerCase()
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[™®©]/g, '')
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim();
+}
+
+/** The review of this type with the same title, if there is one. */
+export function findEntryByName(type, name) {
+  const target = normalizeTitle(name);
+  return target ? MEDIA_TYPES[type].entries.find((entry) => normalizeTitle(entry.name) === target) : undefined;
+}

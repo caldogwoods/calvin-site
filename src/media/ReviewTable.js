@@ -1,4 +1,5 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { MEDIA_TYPES } from './mediaTypes';
 import { editFileUrl } from './github';
@@ -129,7 +130,17 @@ export default function ReviewTable({ type }) {
     const range = columns.find((column) => column.kind === 'range');
     return range ? { key: range.key, dir: 'desc' } : { key: nameColumn.key, dir: 'asc' };
   });
-  const [expanded, setExpanded] = useState(() => new Set());
+  // ?open=<id> opens that row and scrolls to it (used by links from other pages)
+  const [searchParams] = useSearchParams();
+  const openId = searchParams.get('open');
+  const [expanded, setExpanded] = useState(() => new Set(openId ? [openId] : []));
+
+  useEffect(() => {
+    if (!openId) return;
+    setExpanded((prev) => new Set(prev).add(openId));
+    const row = document.getElementById(`row-${type}-${openId}`);
+    if (row) row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, [openId, type]);
 
   const toggleExpanded = (id) => {
     setExpanded((prev) => {
@@ -210,7 +221,8 @@ export default function ReviewTable({ type }) {
               return (
                 <React.Fragment key={entry.id}>
                   <tr
-                    className={`review-row ${isOpen ? 'open' : ''}`}
+                    id={`row-${type}-${entry.id}`}
+                    className={`review-row ${isOpen ? 'open' : ''} ${entry.id === openId ? 'linked' : ''}`}
                     onClick={() => toggleExpanded(entry.id)}
                   >
                     <td className="col-name">

@@ -13,6 +13,7 @@ import ExerciseStats from './exercise/ExerciseStats';
 import Login from './components/Login';
 import Register from './components/Register';
 import PlayHistory from './play/PlayHistory';
+import PsnGameTrophies from './play/PsnGameTrophies';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminRoute from './components/AdminRoute';
 
@@ -150,6 +151,14 @@ function AppContent() {
           element={
             <ProtectedRoute>
               <PlayHistory />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="play-history/playstation/:titleId"
+          element={
+            <ProtectedRoute>
+              <PsnGameTrophies />
             </ProtectedRoute>
           }
         />

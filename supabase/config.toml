@@ -1,0 +1,7 @@
+# Supabase CLI settings, used to deploy the edge functions:
+#   npx supabase functions deploy psn --project-ref kmkqxtdgmjmurlewfaul
+project_id = "kmkqxtdgmjmurlewfaul"
+
+[functions.psn]
+# Require a valid Supabase JWT; the function also checks that it is a signed-in user
+verify_jwt = true
