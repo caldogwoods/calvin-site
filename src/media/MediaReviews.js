@@ -1,13 +1,10 @@
 import React from 'react';
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
+import { MEDIA_TYPES, TYPE_KEYS } from './mediaTypes';
 import './MediaReviews.css';
 
 // Each tab is a child route of /media-reviews (see App.js)
-const TABS = [
-  { path: 'games', label: 'Games' },
-  { path: 'books', label: 'Books' },
-  { path: 'shows', label: 'Movies & Shows' },
-];
+const TABS = TYPE_KEYS.map((key) => ({ path: key, label: MEDIA_TYPES[key].tabLabel }));
 
 export default function MediaReviews() {
   const { pathname } = useLocation();

@@ -3,7 +3,15 @@ import books from './books';
 import shows from './shows';
 
 // One entry per review type. `fields` drives the add form (AddReview.js) and
-// sets the fields, and their order, in each entry's .json file.
+// sets the fields, and their order, in each entry's .json file. `columns` and
+// `details` drive the review table (ReviewTable.js).
+//
+// Table columns (the first is always the name, with the expand toggle):
+//   key, label, defaultDir ('asc' | 'desc', the first sort direction)
+//   kind: text | chip | date | score | range (range also needs `endKey` and
+//         `ongoingLabel`, shown while the end date is null)
+// Details (shown when a row is expanded, after the table columns):
+//   key, label (string, or (entry) => string); empty values are not shown
 //
 // Field types:
 //   text, number, date, url, textarea   plain inputs; number/date are null when empty
@@ -39,6 +47,9 @@ const isMovie = (form) => form.kind === 'Movie';
 export const MEDIA_TYPES = {
   games: {
     label: 'Game',
+    tabLabel: 'Games',
+    title: 'Game reviews',
+    count: ['game', 'games', 'played'],
     icon: '🎮',
     dir: 'src/media/games',
     entries: games,
@@ -60,9 +71,27 @@ export const MEDIA_TYPES = {
       { key: 'imageUrl', type: 'url', label: 'Cover image URL' },
       REVIEW,
     ],
+    columns: [
+      { key: 'name', label: 'Name', kind: 'text', defaultDir: 'asc' },
+      { key: 'platform', label: 'Platform', kind: 'chip', defaultDir: 'asc' },
+      { key: 'releaseDate', label: 'Released', kind: 'date', defaultDir: 'desc' },
+      {
+        key: 'playedStart',
+        endKey: 'playedEnd',
+        label: 'Played',
+        kind: 'range',
+        ongoingLabel: 'Playing',
+        defaultDir: 'desc',
+      },
+      { key: 'score', label: 'Score', kind: 'score', defaultDir: 'desc' },
+    ],
+    details: [{ key: 'developer', label: 'Developer' }],
   },
   books: {
     label: 'Book',
+    tabLabel: 'Books',
+    title: 'Book reviews',
+    count: ['book', 'books', 'read'],
     icon: '📚',
     dir: 'src/media/books',
     entries: books,
@@ -85,9 +114,30 @@ export const MEDIA_TYPES = {
       { key: 'imageUrl', type: 'url', label: 'Cover image URL' },
       REVIEW,
     ],
+    columns: [
+      { key: 'name', label: 'Title', kind: 'text', defaultDir: 'asc' },
+      { key: 'author', label: 'Author', kind: 'text', defaultDir: 'asc' },
+      { key: 'pages', label: 'Pages' },
+      {
+        key: 'readStart',
+        endKey: 'readEnd',
+        label: 'Read',
+        kind: 'range',
+        ongoingLabel: 'Reading',
+        defaultDir: 'desc',
+      },
+      { key: 'score', label: 'Score', kind: 'score', defaultDir: 'desc' },
+    ],
+    details: [
+      { key: 'genre', label: 'Genre' },
+      { key: 'releaseDate', label: 'Published', kind: 'date', defaultDir: 'desc' },
+    ],
   },
   shows: {
     label: 'Movie / Show',
+    tabLabel: 'Movies & Shows',
+    title: 'Movie and show reviews',
+    count: ['title', 'titles', 'watched'],
     icon: '🎬',
     dir: 'src/media/shows',
     entries: shows,
@@ -122,6 +172,24 @@ export const MEDIA_TYPES = {
       SCORE,
       { key: 'imageUrl', type: 'url', label: 'Poster image URL' },
       REVIEW,
+    ],
+    columns: [
+      { key: 'name', label: 'Title', kind: 'text', defaultDir: 'asc' },
+      { key: 'kind', label: 'Type', kind: 'chip', defaultDir: 'asc' },
+      { key: 'releaseDate', label: 'Released', kind: 'date', defaultDir: 'desc' },
+      {
+        key: 'watchedStart',
+        endKey: 'watchedEnd',
+        label: 'Watched',
+        kind: 'range',
+        ongoingLabel: 'Watching',
+        defaultDir: 'desc',
+      },
+      { key: 'score', label: 'Score', kind: 'score', defaultDir: 'desc' },
+    ],
+    details: [
+      { key: 'creator', label: (entry) => (isMovie(entry) ? 'Director' : 'Creator') },
+      { key: 'seasons', label: 'Seasons watched' },
     ],
   },
 };

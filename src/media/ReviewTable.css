@@ -85,11 +85,11 @@
   vertical-align: middle;
 }
 
-.game-row {
+.review-row {
   cursor: pointer;
 }
 
-.reviews-table tbody tr.game-row.open {
+.reviews-table tbody tr.review-row.open {
   background: #f7f7fb;
 }
 
@@ -121,16 +121,16 @@
   transition: transform 0.2s, color 0.2s;
 }
 
-.game-row:hover .row-chevron,
-.game-row.open .row-chevron {
+.review-row:hover .row-chevron,
+.review-row.open .row-chevron {
   color: #667eea;
 }
 
-.game-row.open .row-chevron {
+.review-row.open .row-chevron {
   transform: rotate(90deg);
 }
 
-.game-name {
+.review-name {
   font-weight: 600;
   font-size: 16px;
 }
@@ -143,7 +143,7 @@
   cursor: default;
 }
 
-.game-details {
+.review-details {
   display: grid;
   grid-template-columns: minmax(140px, 200px) 1fr;
   gap: 24px;
@@ -201,7 +201,7 @@
   text-decoration: underline;
 }
 
-.platform-chip {
+.chip {
   display: inline-block;
   padding: 3px 10px;
   border-radius: 999px;
@@ -212,8 +212,8 @@
   white-space: nowrap;
 }
 
-.col-releaseDate,
-.col-playedStart {
+.col-kind-date,
+.col-kind-range {
   white-space: nowrap;
   font-variant-numeric: tabular-nums;
 }
@@ -230,7 +230,7 @@
   font-size: 14px;
 }
 
-.badge-playing {
+.badge-ongoing {
   padding: 1px 8px;
   border-radius: 999px;
   background: #e6f7ee;
@@ -268,7 +268,7 @@
   text-align: right;
 }
 
-.game-image {
+.review-image {
   display: block;
   width: 64px;
   height: 85px;
@@ -278,7 +278,7 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
-.game-image-placeholder {
+.review-image-placeholder {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -342,7 +342,7 @@
     padding: 0;
   }
 
-  .game-details {
+  .review-details {
     grid-template-columns: 1fr;
     gap: 12px;
   }
@@ -362,7 +362,7 @@
     letter-spacing: 0.05em;
   }
 
-  .reviews-table td.col-playedStart {
+  .reviews-table td.col-kind-range {
     display: flex;
   }
 
@@ -373,7 +373,7 @@
     align-self: center;
   }
 
-  .game-name {
+  .review-name {
     display: block;
     margin-bottom: 6px;
   }
