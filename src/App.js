@@ -12,6 +12,7 @@ import ExerciseTracker from './exercise/ExerciseTracker';
 import ExerciseStats from './exercise/ExerciseStats';
 import Login from './components/Login';
 import Register from './components/Register';
+import PlayHistory from './play/PlayHistory';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminRoute from './components/AdminRoute';
 
@@ -71,6 +72,7 @@ function Navigation() {
           <Link to="." onClick={closeMenu}>Home</Link>
           <Link to="media-reviews" onClick={closeMenu}>Media Reviews</Link>
           <Link to="exercise-tracker" onClick={closeMenu}>Exercise Tracker</Link>
+          <Link to="play-history" onClick={closeMenu}>Play History</Link>
           {/* <Link to="lotr-map" onClick={closeMenu}>LOTR Map</Link> */}
           {user ? (
             <div className="nav-account-wrapper" ref={accountMenuRef}>
@@ -140,6 +142,14 @@ function AppContent() {
           element={
             <ProtectedRoute>
               <ExerciseStats />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="play-history"
+          element={
+            <ProtectedRoute>
+              <PlayHistory />
             </ProtectedRoute>
           }
         />
