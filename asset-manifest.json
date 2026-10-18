@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/calvin-site/static/css/main.611e0b07.css",
-    "main.js": "/calvin-site/static/js/main.d9980b3e.js",
+    "main.js": "/calvin-site/static/js/main.1dea3571.js",
     "static/js/453.1202e75f.chunk.js": "/calvin-site/static/js/453.1202e75f.chunk.js",
     "static/media/map-of-middle-earth.jpeg": "/calvin-site/static/media/map-of-middle-earth.ae3bae5a08f4b823133b.jpeg",
     "static/media/middle-earth-detailed.jpg": "/calvin-site/static/media/middle-earth-detailed.13a524f3da08f0a54541.jpg",
@@ -9,11 +9,11 @@
     "static/media/calvin-hobbes.jpg": "/calvin-site/static/media/calvin-hobbes.9ed339a168a8bd49701f.jpg",
     "index.html": "/calvin-site/index.html",
     "main.611e0b07.css.map": "/calvin-site/static/css/main.611e0b07.css.map",
-    "main.d9980b3e.js.map": "/calvin-site/static/js/main.d9980b3e.js.map",
+    "main.1dea3571.js.map": "/calvin-site/static/js/main.1dea3571.js.map",
     "453.1202e75f.chunk.js.map": "/calvin-site/static/js/453.1202e75f.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.611e0b07.css",
-    "static/js/main.d9980b3e.js"
+    "static/js/main.1dea3571.js"
   ]
 }
