@@ -8,7 +8,9 @@ import MediaReviews from './media/MediaReviews';
 import ReviewTable from './media/ReviewTable';
 import { TYPE_KEYS } from './media/mediaTypes';
 import AddReview from './media/AddReview';
+import ExerciseLayout from './exercise/ExerciseLayout';
 import ExerciseTracker from './exercise/ExerciseTracker';
+import OnePunchMan from './exercise/OnePunchMan';
 import ExerciseStats from './exercise/ExerciseStats';
 import Login from './components/Login';
 import Register from './components/Register';
@@ -146,10 +148,13 @@ function AppContent() {
           path="exercise-tracker"
           element={
             <ProtectedRoute>
-              <ExerciseTracker />
+              <ExerciseLayout />
             </ProtectedRoute>
           }
-        />
+        >
+          <Route index element={<ExerciseTracker />} />
+          <Route path="one-punch-man" element={<OnePunchMan />} />
+        </Route>
         <Route
           path="exercise-stats"
           element={
