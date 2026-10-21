@@ -18,8 +18,11 @@ const SITE_PALETTE = document.documentElement.dataset.palette || BASE_PALETTE;
 const STORAGE_KEY = 'dev-palette';
 
 function applyPalette(name) {
-  if (name === BASE_PALETTE) delete document.documentElement.dataset.palette;
-  else document.documentElement.dataset.palette = name;
+  if (name === BASE_PALETTE) {
+    delete document.documentElement.dataset.palette;
+  } else {
+    document.documentElement.dataset.palette = name;
+  }
 }
 
 function readSaved() {
@@ -33,8 +36,11 @@ function readSaved() {
 
 function writeSaved(name) {
   try {
-    if (name) localStorage.setItem(STORAGE_KEY, name);
-    else localStorage.removeItem(STORAGE_KEY);
+    if (name) {
+      localStorage.setItem(STORAGE_KEY, name);
+    } else {
+      localStorage.removeItem(STORAGE_KEY);
+    }
   } catch {
     // Not saved; the preview still applies until reload
   }
@@ -48,12 +54,16 @@ function writeSaved(name) {
 export function initDevPalette() {
   try {
     const fromUrl = new URLSearchParams(window.location.search).get('palette');
-    if (PALETTES.includes(fromUrl)) writeSaved(fromUrl);
+    if (PALETTES.includes(fromUrl)) {
+      writeSaved(fromUrl);
+    }
   } catch {
     // Ignore a bad URL
   }
   const saved = readSaved();
-  if (saved) applyPalette(saved);
+  if (saved) {
+    applyPalette(saved);
+  }
 }
 
 const styles = {
@@ -79,7 +89,13 @@ const styles = {
     borderRadius: '50%',
     background: 'var(--gradient)',
   },
-  select: { font: 'inherit', border: 'none', background: 'none', color: 'var(--text)', cursor: 'pointer' },
+  select: {
+    font: 'inherit',
+    border: 'none',
+    background: 'none',
+    color: 'var(--text)',
+    cursor: 'pointer',
+  },
 };
 
 export default function PaletteSwitcher() {
@@ -90,7 +106,9 @@ export default function PaletteSwitcher() {
   // example, the admin signs out), go back to the site palette
   useEffect(() => {
     applyPalette(readSaved() || SITE_PALETTE);
-    return () => applyPalette(SITE_PALETTE);
+    return () => {
+      applyPalette(SITE_PALETTE);
+    };
   }, []);
 
   const choose = (name) => {
@@ -100,13 +118,24 @@ export default function PaletteSwitcher() {
   };
 
   return (
-    <label style={styles.wrapper} title="Preview the palettes in src/theme.css (only in this browser)">
+    <label
+      style={styles.wrapper}
+      title="Preview the palettes in src/theme.css (only in this browser)"
+    >
       <span style={styles.swatch} aria-hidden="true" />
       Palette
-      <select style={styles.select} value={preview} onChange={(e) => choose(e.target.value)}>
+      <select
+        style={styles.select}
+        value={preview}
+        onChange={(e) => {
+          choose(e.target.value);
+        }}
+      >
         <option value="">site default ({SITE_PALETTE})</option>
         {PALETTES.map((name) => (
-          <option key={name} value={name}>{name}</option>
+          <option key={name} value={name}>
+            {name}
+          </option>
         ))}
       </select>
     </label>

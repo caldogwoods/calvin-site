@@ -31,7 +31,9 @@ export function clearCache(userId) {
     const start = keyFor(userId, '');
     Object.keys(localStorage)
       .filter((key) => key.startsWith(start))
-      .forEach((key) => localStorage.removeItem(key));
+      .forEach((key) => {
+        localStorage.removeItem(key);
+      });
   } catch {
     // Nothing to clear
   }

@@ -15,14 +15,22 @@ function formatSeconds(seconds) {
 }
 
 export function formatAmount(exercise, amount) {
-  if (exercise.unit === 'seconds') return formatSeconds(amount);
-  if (exercise.unit === 'minutes') return `${amount} min`;
+  if (exercise.unit === 'seconds') {
+    return formatSeconds(amount);
+  }
+  if (exercise.unit === 'minutes') {
+    return `${amount} min`;
+  }
   return String(amount);
 }
 
 export function formatChunk(exercise, amount) {
-  if (exercise.unit === 'seconds') return amount < 60 ? `+${amount}s` : `+${formatSeconds(amount)}`;
-  if (exercise.unit === 'minutes') return `+${amount}m`;
+  if (exercise.unit === 'seconds') {
+    return amount < 60 ? `+${amount}s` : `+${formatSeconds(amount)}`;
+  }
+  if (exercise.unit === 'minutes') {
+    return `+${amount}m`;
+  }
   return `+${amount}`;
 }
 
@@ -46,10 +54,13 @@ export function addDays(dateKey, days) {
 
 export function totalsByDay(logs) {
   const totals = {};
-  for (const log of logs) {
-    const day = (totals[log.log_date] = totals[log.log_date] || {});
-    day[log.exercise] = (day[log.exercise] || 0) + log.amount;
-  }
+  logs.forEach((log) => {
+    if (!totals[log.log_date]) {
+      totals[log.log_date] = {};
+    }
+    const dayTotals = totals[log.log_date];
+    dayTotals[log.exercise] = (dayTotals[log.exercise] || 0) + log.amount;
+  });
   return totals;
 }
 

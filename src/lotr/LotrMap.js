@@ -3,8 +3,6 @@ import { Link } from 'react-router-dom';
 import './LotrMap.css';
 import firstAgeMap from '../assets/lotr-first-age-map.webp';
 import secondAgeMap from '../assets/map-of-middle-earth.jpeg';
-import thirdAgeMap from '../assets/lotr-first-age-map.webp';
-import fourthAgeMap from '../assets/lotr-first-age-map.webp';
 import middleEarthMap from '../assets/middle-earth-detailed.jpg';
 
 const ERAS = ['First Age', 'Second Age', 'Third Age', 'Fourth Age', 'Latter Ages'];
@@ -14,8 +12,8 @@ const ERAS = ['First Age', 'Second Age', 'Third Age', 'Fourth Age', 'Latter Ages
 const maps = [
   firstAgeMap, // First Age
   secondAgeMap, // Second Age (placeholder)
-  thirdAgeMap, // Third Age (placeholder)
-  fourthAgeMap, // Fourth Age (placeholder)
+  firstAgeMap, // Third Age (placeholder)
+  firstAgeMap, // Fourth Age (placeholder)
   middleEarthMap, // Latter Ages (placeholder)
 ];
 
@@ -35,25 +33,30 @@ export default function LotrMap() {
     return Array.from({ length: count }, (_, i) => (i / (count - 1)) * 100);
   }, []);
 
-  const indexForClientX = useCallback((clientX) => {
-    const el = trackRef.current;
-    if (!el) return 0;
-    const rect = el.getBoundingClientRect();
-    const innerLeft = rect.left + 24;
-    const innerWidth = rect.width - 48;
-    const x = Math.min(Math.max(clientX - innerLeft, 0), innerWidth);
-    const pct = (x / innerWidth) * 100;
-    let best = 0;
-    let bestDist = Infinity;
-    positions.forEach((p, i) => {
-      const d = Math.abs(p - pct);
-      if (d < bestDist) {
-        bestDist = d;
-        best = i;
+  const indexForClientX = useCallback(
+    (clientX) => {
+      const el = trackRef.current;
+      if (!el) {
+        return 0;
       }
-    });
-    return best;
-  }, [positions]);
+      const rect = el.getBoundingClientRect();
+      const innerLeft = rect.left + 24;
+      const innerWidth = rect.width - 48;
+      const x = Math.min(Math.max(clientX - innerLeft, 0), innerWidth);
+      const pct = (x / innerWidth) * 100;
+      let best = 0;
+      let bestDist = Infinity;
+      positions.forEach((p, i) => {
+        const d = Math.abs(p - pct);
+        if (d < bestDist) {
+          bestDist = d;
+          best = i;
+        }
+      });
+      return best;
+    },
+    [positions],
+  );
 
   useEffect(() => {
     let onMove = null;
@@ -68,8 +71,12 @@ export default function LotrMap() {
       };
 
       onUp = () => {
-        if (onMove) document.removeEventListener('pointermove', onMove);
-        if (onUp) document.removeEventListener('pointerup', onUp);
+        if (onMove) {
+          document.removeEventListener('pointermove', onMove);
+        }
+        if (onUp) {
+          document.removeEventListener('pointerup', onUp);
+        }
         document.body.style.userSelect = '';
       };
 
@@ -80,32 +87,48 @@ export default function LotrMap() {
 
     const handle = handleRef.current;
     const track = trackRef.current;
-    if (handle) handle.addEventListener('pointerdown', startDrag);
+    if (handle) {
+      handle.addEventListener('pointerdown', startDrag);
+    }
     const clickJump = (e) => {
       const idx = indexForClientX(e.clientX);
       setSelected(idx);
     };
-    if (track) track.addEventListener('pointerdown', clickJump);
+    if (track) {
+      track.addEventListener('pointerdown', clickJump);
+    }
 
     return () => {
-      if (handle) handle.removeEventListener('pointerdown', startDrag);
-      if (track) track.removeEventListener('pointerdown', clickJump);
-      if (onMove) document.removeEventListener('pointermove', onMove);
-      if (onUp) document.removeEventListener('pointerup', onUp);
+      if (handle) {
+        handle.removeEventListener('pointerdown', startDrag);
+      }
+      if (track) {
+        track.removeEventListener('pointerdown', clickJump);
+      }
+      if (onMove) {
+        document.removeEventListener('pointermove', onMove);
+      }
+      if (onUp) {
+        document.removeEventListener('pointerup', onUp);
+      }
       document.body.style.userSelect = '';
     };
   }, [indexForClientX]);
 
   return (
     <div className="lotr-map-container">
-      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <h2>LOTR Map</h2>
         <h3>...under construction</h3>
-        <div><Link to="..">← Back</Link></div>
+        <div>
+          <Link to="..">← Back</Link>
+        </div>
       </div>
 
       <div className="map-wrapper">
-        <div className="selected-era" aria-live="polite">{ERAS[selected]}</div>
+        <div className="selected-era" aria-live="polite">
+          {ERAS[selected]}
+        </div>
         <img
           className="map-image"
           src={imageSrc}
@@ -131,11 +154,17 @@ export default function LotrMap() {
             <div
               key={ERAS[i]}
               className={`notch ${i === selected ? 'active' : ''}`}
-              onClick={() => setSelected(i)}
+              onClick={() => {
+                setSelected(i);
+              }}
               style={{ left: `${pct}%` }}
               role="button"
               tabIndex={0}
-              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setSelected(i); }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  setSelected(i);
+                }
+              }}
               aria-label={ERAS[i]}
             />
           ))}
@@ -154,7 +183,9 @@ export default function LotrMap() {
 
         <div className="notch-labels">
           {ERAS.map((label) => (
-            <div key={label} className="era-label">{label}</div>
+            <div key={label} className="era-label">
+              {label}
+            </div>
           ))}
         </div>
       </div>

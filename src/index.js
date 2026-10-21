@@ -8,7 +8,9 @@ import { initDevPalette } from './components/PaletteSwitcher';
 import reportWebVitals from './reportWebVitals';
 
 // Development only: apply the palette picked with the palette picker or ?palette=
-if (process.env.NODE_ENV === 'development') initDevPalette();
+if (process.env.NODE_ENV === 'development') {
+  initDevPalette();
+}
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -16,7 +18,7 @@ root.render(
     <HashRouter>
       <App />
     </HashRouter>
-  </React.StrictMode>
+  </React.StrictMode>,
 );
 
 // If you want to start measuring performance in your app, pass a function

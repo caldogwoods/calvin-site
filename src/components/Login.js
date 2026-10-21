@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 import { returnPath } from './authRedirect';
 import './Auth.css';
 
@@ -23,8 +23,8 @@ export default function Login() {
       const email = `${username}@local.app`;
       await signIn(email, password);
       navigate(returnPath(location), { replace: true });
-    } catch (error) {
-      setError('Failed to sign in: ' + error.message);
+    } catch (err) {
+      setError(`Failed to sign in: ${err.message}`);
     } finally {
       setLoading(false);
     }
@@ -42,7 +42,9 @@ export default function Login() {
               id="username"
               type="text"
               value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              onChange={(e) => {
+                setUsername(e.target.value);
+              }}
               required
               disabled={loading}
             />
@@ -53,7 +55,9 @@ export default function Login() {
               id="password"
               type="password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => {
+                setPassword(e.target.value);
+              }}
               required
               disabled={loading}
             />
@@ -63,7 +67,10 @@ export default function Login() {
           </button>
         </form>
         <p className="auth-link">
-          Don't have an account? <Link to="/register" state={location.state}>Register here</Link>
+          Don’t have an account?{' '}
+          <Link to="/register" state={location.state}>
+            Register here
+          </Link>
         </p>
       </div>
     </div>

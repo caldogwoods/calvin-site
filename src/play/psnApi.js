@@ -8,7 +8,9 @@ async function callPsn(body) {
     let message = 'Could not reach the server. Try again later.';
     try {
       const details = await error.context.json();
-      if (details.error) message = details.error;
+      if (details.error) {
+        message = details.error;
+      }
     } catch {
       // Not a JSON error response; keep the general message
     }
@@ -20,11 +22,14 @@ async function callPsn(body) {
 export const getPsnGames = (refresh = false) => callPsn({ action: 'games', refresh });
 export const linkPsn = (npsso) => callPsn({ action: 'link', npsso });
 export const unlinkPsn = () => callPsn({ action: 'unlink' });
-export const getPsnTrophies = (titleId, refresh = false) => callPsn({ action: 'trophies', titleId, refresh });
+export const getPsnTrophies = (titleId, refresh = false) =>
+  callPsn({ action: 'trophies', titleId, refresh });
 
 // Debugging: the unchanged PSN responses (game list, or one game's trophies). Not saved.
 export async function getPsnRaw(titleId) {
   const result = await callPsn({ action: 'raw', titleId });
-  if (result.status !== 'ok') throw new Error(`PlayStation account is ${result.status}.`);
+  if (result.status !== 'ok') {
+    throw new Error(`PlayStation account is ${result.status}.`);
+  }
   return result.raw;
 }

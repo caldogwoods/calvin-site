@@ -211,5 +211,7 @@ export function normalizeTitle(name) {
 /** The review of this type with the same title, if there is one. */
 export function findEntryByName(type, name) {
   const target = normalizeTitle(name);
-  return target ? MEDIA_TYPES[type].entries.find((entry) => normalizeTitle(entry.name) === target) : undefined;
+  return target
+    ? MEDIA_TYPES[type].entries.find((entry) => normalizeTitle(entry.name) === target)
+    : undefined;
 }

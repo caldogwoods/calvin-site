@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 import { MEDIA_TYPES, TYPE_KEYS } from './mediaTypes';
 import './MediaReviews.css';
 
@@ -8,6 +9,7 @@ const TABS = TYPE_KEYS.map((key) => ({ path: key, label: MEDIA_TYPES[key].tabLab
 
 export default function MediaReviews() {
   const { pathname } = useLocation();
+  const { isAdmin } = useAuth();
   // Start the add form on the type of the open tab
   const currentTab = TABS.find((tab) => pathname.endsWith(`/${tab.path}`));
   const addUrl = `/media-reviews/new${currentTab ? `?type=${currentTab.path}` : ''}`;
@@ -17,10 +19,11 @@ export default function MediaReviews() {
       <header className="reviews-header">
         <div className="reviews-title-row">
           <h2>Media Reviews</h2>
-          {/* Shown to everyone; the add page itself is admin-only */}
-          <Link to={addUrl} className="add-review-button">
-            <span aria-hidden="true">+</span> Add review
-          </Link>
+          {isAdmin && (
+            <Link to={addUrl} className="add-review-button">
+              <span aria-hidden="true">+</span> Add review
+            </Link>
+          )}
         </div>
         <nav className="reviews-tabs" aria-label="Media type">
           {TABS.map((tab) => (
@@ -42,7 +45,9 @@ export default function MediaReviews() {
 export function ComingSoon({ icon, title }) {
   return (
     <div className="coming-soon">
-      <div className="coming-soon-icon" aria-hidden="true">{icon}</div>
+      <div className="coming-soon-icon" aria-hidden="true">
+        {icon}
+      </div>
       <h3>{title} are coming soon</h3>
       <p>Nothing here yet. Check back later.</p>
     </div>

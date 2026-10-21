@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../supabaseClient';
-import { Link } from 'react-router-dom';
 import { ACTIVITY_TYPES, POINT_THRESHOLDS } from './constants';
 import './ExerciseTracker.css';
 
@@ -19,16 +19,18 @@ export default function ExerciseTracker() {
   const fetchActivities = useCallback(async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
+      const { data, error: queryError } = await supabase
         .from('activities')
         .select('*')
         .eq('user_id', user.id)
         .order('activity_date', { ascending: false });
 
-      if (error) throw error;
+      if (queryError) {
+        throw queryError;
+      }
       setActivities(data || []);
-    } catch (error) {
-      console.error('Error fetching activities:', error);
+    } catch (err) {
+      console.error('Error fetching activities:', err);
       setError('Failed to load activities');
     } finally {
       setLoading(false);
@@ -46,7 +48,7 @@ export default function ExerciseTracker() {
     setError('');
     setSubmitting(true);
 
-    const activityType = ACTIVITY_TYPES.find(a => a.name === selectedActivity);
+    const activityType = ACTIVITY_TYPES.find((a) => a.name === selectedActivity);
 
     try {
       // Calculate points and round to nearest integer
@@ -57,7 +59,7 @@ export default function ExerciseTracker() {
         calculatedPoints = Math.ceil(activityType.points);
       }
 
-      const { error } = await supabase.from('activities').insert({
+      const { error: queryError } = await supabase.from('activities').insert({
         user_id: user.id,
         activity_type: selectedActivity,
         duration_minutes: duration ? parseFloat(duration) : null,
@@ -66,7 +68,9 @@ export default function ExerciseTracker() {
         activity_date: activityDate,
       });
 
-      if (error) throw error;
+      if (queryError) {
+        throw queryError;
+      }
 
       // Reset form
       setDuration('');
@@ -75,41 +79,46 @@ export default function ExerciseTracker() {
 
       // Refresh activities
       await fetchActivities();
-    } catch (error) {
-      console.error('Error adding activity:', error);
-      setError('Failed to add activity: ' + error.message);
+    } catch (err) {
+      console.error('Error adding activity:', err);
+      setError(`Failed to add activity: ${err.message}`);
     } finally {
       setSubmitting(false);
     }
   };
 
   const deleteActivity = async (id) => {
-    if (!window.confirm('Delete this activity?')) return;
+    if (!window.confirm('Delete this activity?')) {
+      return;
+    }
 
     try {
-      const { error } = await supabase
-        .from('activities')
-        .delete()
-        .eq('id', id);
+      const { error: queryError } = await supabase.from('activities').delete().eq('id', id);
 
-      if (error) throw error;
+      if (queryError) {
+        throw queryError;
+      }
       await fetchActivities();
-    } catch (error) {
-      console.error('Error deleting activity:', error);
+    } catch (err) {
+      console.error('Error deleting activity:', err);
       setError('Failed to delete activity');
     }
   };
 
   const totalPoints = activities.reduce((sum, activity) => sum + activity.points, 0);
 
-  const currentLevel = [...POINT_THRESHOLDS]
-    .reverse()
-    .find(threshold => totalPoints >= threshold.points) || POINT_THRESHOLDS[0];
+  const currentLevel =
+    [...POINT_THRESHOLDS].reverse().find((threshold) => totalPoints >= threshold.points) ||
+    POINT_THRESHOLDS[0];
 
-  const nextLevel = POINT_THRESHOLDS.find(threshold => threshold.points > totalPoints);
+  const nextLevel = POINT_THRESHOLDS.find((threshold) => threshold.points > totalPoints);
 
   if (loading) {
-    return <div className="exercise-container"><p>Loading...</p></div>;
+    return (
+      <div className="exercise-container">
+        <p>Loading...</p>
+      </div>
+    );
   }
 
   return (
@@ -143,10 +152,12 @@ export default function ExerciseTracker() {
               <select
                 id="activity-type"
                 value={selectedActivity}
-                onChange={(e) => setSelectedActivity(e.target.value)}
+                onChange={(e) => {
+                  setSelectedActivity(e.target.value);
+                }}
                 disabled={submitting}
               >
-                {ACTIVITY_TYPES.map(type => (
+                {ACTIVITY_TYPES.map((type) => (
                   <option key={type.name} value={type.name}>
                     {type.name} ({type.points} pts)
                   </option>
@@ -160,10 +171,14 @@ export default function ExerciseTracker() {
                 id="duration"
                 type="number"
                 value={duration}
-                onChange={(e) => setDuration(e.target.value)}
+                onChange={(e) => {
+                  setDuration(e.target.value);
+                }}
                 placeholder="Optional"
                 min="1"
-                disabled={submitting || !ACTIVITY_TYPES.find(a => a.name === selectedActivity).multiplier}
+                disabled={
+                  submitting || !ACTIVITY_TYPES.find((a) => a.name === selectedActivity).multiplier
+                }
               />
             </div>
 
@@ -173,7 +188,9 @@ export default function ExerciseTracker() {
                 id="activity-date"
                 type="date"
                 value={activityDate}
-                onChange={(e) => setActivityDate(e.target.value)}
+                onChange={(e) => {
+                  setActivityDate(e.target.value);
+                }}
                 disabled={submitting}
                 required
               />
@@ -184,7 +201,9 @@ export default function ExerciseTracker() {
               <textarea
                 id="notes"
                 value={notes}
-                onChange={(e) => setNotes(e.target.value)}
+                onChange={(e) => {
+                  setNotes(e.target.value);
+                }}
                 placeholder="How did it go?"
                 rows="3"
                 disabled={submitting}
@@ -203,7 +222,7 @@ export default function ExerciseTracker() {
             <p className="no-activities">No activities yet. Start logging!</p>
           ) : (
             <div className="activities-list">
-              {activities.map(activity => (
+              {activities.map((activity) => (
                 <div key={activity.id} className="activity-item">
                   <div className="activity-header-row">
                     <strong>{activity.activity_type}</strong>
@@ -213,15 +232,14 @@ export default function ExerciseTracker() {
                     {new Date(activity.activity_date).toLocaleDateString()}
                   </div>
                   {activity.duration_minutes && (
-                    <div className="activity-duration">
-                      {activity.duration_minutes} minutes
-                    </div>
+                    <div className="activity-duration">{activity.duration_minutes} minutes</div>
                   )}
-                  {activity.notes && (
-                    <div className="activity-notes">{activity.notes}</div>
-                  )}
+                  {activity.notes && <div className="activity-notes">{activity.notes}</div>}
                   <button
-                    onClick={() => deleteActivity(activity.id)}
+                    type="button"
+                    onClick={() => {
+                      deleteActivity(activity.id);
+                    }}
                     className="btn-delete"
                   >
                     Delete

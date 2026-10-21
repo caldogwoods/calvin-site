@@ -127,7 +127,10 @@
   font-weight: 500;
   color: var(--accent-strong);
   cursor: pointer;
-  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  transition:
+    background 0.2s,
+    color 0.2s,
+    box-shadow 0.2s;
 }
 
 .ph-sort button:hover {
@@ -154,7 +157,9 @@
   border-radius: 8px;
   font: inherit;
   font-size: 14px;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
 }
 
 .ph-search:focus {
@@ -197,7 +202,9 @@
   color: #c5c7d3;
   font-size: 22px;
   line-height: 1;
-  transition: color 0.15s, transform 0.15s;
+  transition:
+    color 0.15s,
+    transform 0.15s;
 }
 
 .ph-row:hover .ph-row-arrow {
@@ -332,7 +339,9 @@
   text-decoration: none;
   white-space: nowrap;
   box-shadow: 0 2px 8px var(--accent-shadow);
-  transition: opacity 0.2s, transform 0.2s;
+  transition:
+    opacity 0.2s,
+    transform 0.2s;
 }
 
 .tr-review-button:hover {
@@ -454,15 +463,39 @@
   border-radius: 50%;
 }
 
-.tr-dot.platinum, .tr-type.platinum { background: #dfe7f2; color: #476fb4; }
-.tr-dot.gold, .tr-type.gold { background: #f6e3a1; color: #7a5a00; }
-.tr-dot.silver, .tr-type.silver { background: #e3e5ea; color: #555b66; }
-.tr-dot.bronze, .tr-type.bronze { background: #efd2bd; color: #7f4521; }
+.tr-dot.platinum,
+.tr-type.platinum {
+  background: #dfe7f2;
+  color: #476fb4;
+}
+.tr-dot.gold,
+.tr-type.gold {
+  background: #f6e3a1;
+  color: #7a5a00;
+}
+.tr-dot.silver,
+.tr-type.silver {
+  background: #e3e5ea;
+  color: #555b66;
+}
+.tr-dot.bronze,
+.tr-type.bronze {
+  background: #efd2bd;
+  color: #7f4521;
+}
 
-.tr-dot.platinum { background: #476fb4; }
-.tr-dot.gold { background: #d9a91a; }
-.tr-dot.silver { background: #a7adb8; }
-.tr-dot.bronze { background: #c07a48; }
+.tr-dot.platinum {
+  background: #476fb4;
+}
+.tr-dot.gold {
+  background: #d9a91a;
+}
+.tr-dot.silver {
+  background: #a7adb8;
+}
+.tr-dot.bronze {
+  background: #c07a48;
+}
 
 .tr-toolbar {
   border-bottom: none;
@@ -484,7 +517,9 @@
   font-weight: 500;
   color: var(--text-body);
   cursor: pointer;
-  transition: border-color 0.2s, color 0.2s;
+  transition:
+    border-color 0.2s,
+    color 0.2s;
 }
 
 .tr-direction:hover {
@@ -615,10 +650,22 @@
   white-space: nowrap;
 }
 
-.tr-rarity.ultra-rare { background: #f1e6fb; color: #7a3fb0; }
-.tr-rarity.very-rare { background: var(--accent-soft); color: var(--accent-strong); }
-.tr-rarity.rare { background: #e6f7ee; color: #1f8a4c; }
-.tr-rarity.common { background: #f0f0f4; color: var(--text-muted); }
+.tr-rarity.ultra-rare {
+  background: #f1e6fb;
+  color: #7a3fb0;
+}
+.tr-rarity.very-rare {
+  background: var(--accent-soft);
+  color: var(--accent-strong);
+}
+.tr-rarity.rare {
+  background: #e6f7ee;
+  color: #1f8a4c;
+}
+.tr-rarity.common {
+  background: #f0f0f4;
+  color: var(--text-muted);
+}
 
 .tr-earned {
   color: var(--text-muted);

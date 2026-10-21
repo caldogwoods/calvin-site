@@ -38,7 +38,9 @@ let keyPromise: Promise<CryptoKey> | null = null;
 function getKey(): Promise<CryptoKey> {
   if (!keyPromise) {
     const secret = Deno.env.get('PSN_TOKEN_KEY');
-    if (!secret) throw new Error('PSN_TOKEN_KEY is not set.');
+    if (!secret) {
+      throw new Error('PSN_TOKEN_KEY is not set.');
+    }
     keyPromise = crypto.subtle.importKey('raw', fromBase64(secret), 'AES-GCM', false, [
       'encrypt',
       'decrypt',
@@ -50,7 +52,11 @@ function getKey(): Promise<CryptoKey> {
 /** Returns "iv.ciphertext", both base64. */
 async function encrypt(plainText: string): Promise<string> {
   const iv = crypto.getRandomValues(new Uint8Array(12));
-  const cipher = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, await getKey(), encoder.encode(plainText));
+  const cipher = await crypto.subtle.encrypt(
+    { name: 'AES-GCM', iv },
+    await getKey(),
+    encoder.encode(plainText),
+  );
   return `${toBase64(iv)}.${toBase64(new Uint8Array(cipher))}`;
 }
 
@@ -111,7 +117,9 @@ async function getAccessToken(npsso: string): Promise<string> {
   await authorize.body?.cancel();
   const location = authorize.headers.get('location');
   const code = location && new URL(location).searchParams.get('code');
-  if (!code) throw new ExpiredTokenError('Sony did not accept the NPSSO token.');
+  if (!code) {
+    throw new ExpiredTokenError('Sony did not accept the NPSSO token.');
+  }
 
   const response = await fetch(`${AUTH_BASE_URL}/token`, {
     method: 'POST',
@@ -126,16 +134,22 @@ async function getAccessToken(npsso: string): Promise<string> {
       token_format: 'jwt',
     }),
   });
-  if (!response.ok) throw new Error(`PSN token request failed: HTTP ${response.status}`);
+  if (!response.ok) {
+    throw new Error(`PSN token request failed: HTTP ${response.status}`);
+  }
   return (await response.json()).access_token;
 }
 
 // "PT12H34M56S" (or "P1DT2H") -> whole minutes
 function durationToMinutes(duration: string | undefined): number | null {
   const match = /^P(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:([\d.]+)S)?)?$/.exec(duration || '');
-  if (!match) return null;
+  if (!match) {
+    return null;
+  }
   const [, days = '0', hours = '0', minutes = '0', seconds = '0'] = match;
-  return Math.round(Number(days) * 1440 + Number(hours) * 60 + Number(minutes) + Number(seconds) / 60);
+  return Math.round(
+    Number(days) * 1440 + Number(hours) * 60 + Number(minutes) + Number(seconds) / 60,
+  );
 }
 
 /** The unchanged PSN game list entries, all pages. */
@@ -153,10 +167,14 @@ async function getRawGameTitles(accessToken: string): Promise<any[]> {
     const response = await fetch(`${GAMES_URL}?${params}`, {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
-    if (!response.ok) throw new Error(`PSN game list request failed: HTTP ${response.status}`);
+    if (!response.ok) {
+      throw new Error(`PSN game list request failed: HTTP ${response.status}`);
+    }
     const page = await response.json();
     titles.push(...page.titles);
-    if (!page.nextOffset || page.titles.length === 0) break;
+    if (!page.nextOffset || page.titles.length === 0) {
+      break;
+    }
     offset = page.nextOffset;
   }
   return titles;
@@ -183,7 +201,9 @@ const TROPHY_BASE_URL = 'https://m.np.playstation.com/api/trophy/v1';
 // deno-lint-ignore no-explicit-any
 async function psnGet(url: string, accessToken: string): Promise<any> {
   const response = await fetch(url, { headers: { Authorization: `Bearer ${accessToken}` } });
-  if (!response.ok) throw new Error(`PSN request failed: HTTP ${response.status} for ${new URL(url).pathname}`);
+  if (!response.ok) {
+    throw new Error(`PSN request failed: HTTP ${response.status} for ${new URL(url).pathname}`);
+  }
   return response.json();
 }
 
@@ -198,23 +218,39 @@ const TROPHY_ORDER = ['platinum', 'gold', 'silver', 'bronze'];
  * game has a trophy list) the trophy definitions, the user's progress, and the groups.
  */
 async function getRawTrophyResponses(accessToken: string, titleId: string) {
-  const lookup = await psnGet(`${TROPHY_BASE_URL}/users/me/titles/trophyTitles?npTitleIds=${titleId}`, accessToken);
+  const lookup = await psnGet(
+    `${TROPHY_BASE_URL}/users/me/titles/trophyTitles?npTitleIds=${titleId}`,
+    accessToken,
+  );
   const title = lookup.titles?.[0]?.trophyTitles?.[0];
-  if (!title) return { lookup };
+  if (!title) {
+    return { lookup };
+  }
 
   const id = title.npCommunicationId;
   const service = `npServiceName=${title.npServiceName}`;
   const [definitions, progress, groups] = await Promise.all([
-    psnGet(`${TROPHY_BASE_URL}/npCommunicationIds/${id}/trophyGroups/all/trophies?${service}`, accessToken),
-    psnGet(`${TROPHY_BASE_URL}/users/me/npCommunicationIds/${id}/trophyGroups/all/trophies?${service}`, accessToken),
+    psnGet(
+      `${TROPHY_BASE_URL}/npCommunicationIds/${id}/trophyGroups/all/trophies?${service}`,
+      accessToken,
+    ),
+    psnGet(
+      `${TROPHY_BASE_URL}/users/me/npCommunicationIds/${id}/trophyGroups/all/trophies?${service}`,
+      accessToken,
+    ),
     psnGet(`${TROPHY_BASE_URL}/npCommunicationIds/${id}/trophyGroups?${service}`, accessToken),
   ]);
   return { lookup, definitions, progress, groups };
 }
 
 async function getGameTrophies(accessToken: string, titleId: string) {
-  const { lookup, definitions, progress, groups } = await getRawTrophyResponses(accessToken, titleId);
-  if (!definitions) return null;
+  const { lookup, definitions, progress, groups } = await getRawTrophyResponses(
+    accessToken,
+    titleId,
+  );
+  if (!definitions) {
+    return null;
+  }
   const title = lookup.titles[0].trophyTitles[0];
 
   // deno-lint-ignore no-explicit-any
@@ -249,7 +285,8 @@ async function getGameTrophies(accessToken: string, titleId: string) {
     groups: groups.trophyGroups.map((g: any) => ({ id: g.trophyGroupId, name: g.trophyGroupName })),
     trophies: trophies.sort(
       // deno-lint-ignore no-explicit-any
-      (a: any, b: any) => TROPHY_ORDER.indexOf(a.type) - TROPHY_ORDER.indexOf(b.type) || a.id - b.id,
+      (a: any, b: any) =>
+        TROPHY_ORDER.indexOf(a.type) - TROPHY_ORDER.indexOf(b.type) || a.id - b.id,
     ),
   };
 }
@@ -262,9 +299,13 @@ const REFRESH_MINUTES = 5;
 
 const ALLOWED_ORIGINS = ['https://caldogwoods.github.io', 'http://localhost:3000'];
 
-const admin = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!, {
-  auth: { persistSession: false },
-});
+const admin = createClient(
+  Deno.env.get('SUPABASE_URL')!,
+  Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
+  {
+    auth: { persistSession: false },
+  },
+);
 
 function corsHeaders(request: Request): Record<string, string> {
   const origin = request.headers.get('origin') || '';
@@ -285,19 +326,34 @@ function linkedResponse(row: any, extra: Record<string, unknown> = {}) {
 }
 
 async function getGames(userId: string, refresh: boolean) {
-  const { data: row, error } = await admin.from('psn_links').select('*').eq('user_id', userId).maybeSingle();
-  if (error) throw error;
-  if (!row) return { status: 'unlinked' };
-  if (row.status === 'expired') return linkedResponse(row);
+  const { data: row, error } = await admin
+    .from('psn_links')
+    .select('*')
+    .eq('user_id', userId)
+    .maybeSingle();
+  if (error) {
+    throw error;
+  }
+  if (!row) {
+    return { status: 'unlinked' };
+  }
+  if (row.status === 'expired') {
+    return linkedResponse(row);
+  }
 
   // Use the saved list unless there is none, or a refresh was asked for (and allowed)
   const age = minutesSince(row.games_updated_at);
-  if (row.games_updated_at && !(refresh && age > REFRESH_MINUTES)) return linkedResponse(row);
+  if (row.games_updated_at && !(refresh && age > REFRESH_MINUTES)) {
+    return linkedResponse(row);
+  }
 
   try {
     const games = await getPlayedGames(await getAccessToken(await decrypt(row.npsso_encrypted)));
     const updatedAt = new Date().toISOString();
-    await admin.from('psn_links').update({ games, games_updated_at: updatedAt }).eq('user_id', userId);
+    await admin
+      .from('psn_links')
+      .update({ games, games_updated_at: updatedAt })
+      .eq('user_id', userId);
     return { status: 'ok', games, updatedAt };
   } catch (err) {
     if (err instanceof ExpiredTokenError) {
@@ -312,14 +368,21 @@ async function getGames(userId: string, refresh: boolean) {
 
 async function link(userId: string, npsso: unknown) {
   if (typeof npsso !== 'string' || !/^[A-Za-z0-9]{40,100}$/.test(npsso.trim())) {
-    return { error: 'That does not look like an NPSSO token. Copy only the value of "npsso".', httpStatus: 400 };
+    return {
+      error: 'That does not look like an NPSSO token. Copy only the value of "npsso".',
+      httpStatus: 400,
+    };
   }
   let games;
   try {
     games = await getPlayedGames(await getAccessToken(npsso.trim()));
   } catch (err) {
     if (err instanceof ExpiredTokenError) {
-      return { error: 'Sony did not accept that token. Sign in at playstation.com again and copy a new one.', httpStatus: 400 };
+      return {
+        error:
+          'Sony did not accept that token. Sign in at playstation.com again and copy a new one.',
+        httpStatus: 400,
+      };
     }
     throw err;
   }
@@ -332,7 +395,9 @@ async function link(userId: string, npsso: unknown) {
     games,
     games_updated_at: updatedAt,
   });
-  if (error) throw error;
+  if (error) {
+    throw error;
+  }
   return { status: 'ok', games, updatedAt };
 }
 
@@ -342,9 +407,17 @@ async function trophies(userId: string, titleId: unknown, refresh: boolean): Pro
   if (typeof titleId !== 'string' || !/^[A-Z]{4}\d{5}_\d{2}$/.test(titleId)) {
     return { error: 'Unknown game.', httpStatus: 400 };
   }
-  const { data: row, error } = await admin.from('psn_links').select('*').eq('user_id', userId).maybeSingle();
-  if (error) throw error;
-  if (!row) return { status: 'unlinked' };
+  const { data: row, error } = await admin
+    .from('psn_links')
+    .select('*')
+    .eq('user_id', userId)
+    .maybeSingle();
+  if (error) {
+    throw error;
+  }
+  if (!row) {
+    return { status: 'unlinked' };
+  }
 
   const { data: saved, error: savedError } = await admin
     .from('psn_trophies')
@@ -352,13 +425,21 @@ async function trophies(userId: string, titleId: unknown, refresh: boolean): Pro
     .eq('user_id', userId)
     .eq('title_id', titleId)
     .maybeSingle();
-  if (savedError) throw savedError;
+  if (savedError) {
+    throw savedError;
+  }
   const savedResponse = (status: string, extra: Record<string, unknown> = {}) =>
-    saved ? { status, game: saved.game, updatedAt: saved.updated_at, ...extra } : { status, ...extra };
+    saved
+      ? { status, game: saved.game, updatedAt: saved.updated_at, ...extra }
+      : { status, ...extra };
 
-  if (row.status === 'expired') return savedResponse('expired');
+  if (row.status === 'expired') {
+    return savedResponse('expired');
+  }
   // Use the saved trophies unless there are none, or a refresh was asked for (and allowed)
-  if (saved && !(refresh && minutesSince(saved.updated_at) > REFRESH_MINUTES)) return savedResponse('ok');
+  if (saved && !(refresh && minutesSince(saved.updated_at) > REFRESH_MINUTES)) {
+    return savedResponse('ok');
+  }
 
   try {
     const accessToken = await getAccessToken(await decrypt(row.npsso_encrypted));
@@ -367,7 +448,9 @@ async function trophies(userId: string, titleId: unknown, refresh: boolean): Pro
     const { error: saveError } = await admin
       .from('psn_trophies')
       .upsert({ user_id: userId, title_id: titleId, game, updated_at: updatedAt });
-    if (saveError) throw saveError;
+    if (saveError) {
+      throw saveError;
+    }
     return { status: 'ok', game, updatedAt };
   } catch (err) {
     if (err instanceof ExpiredTokenError) {
@@ -388,12 +471,22 @@ async function raw(userId: string, titleId: unknown): Promise<ActionResult> {
   if (titleId != null && (typeof titleId !== 'string' || !/^[A-Z]{4}\d{5}_\d{2}$/.test(titleId))) {
     return { error: 'Unknown game.', httpStatus: 400 };
   }
-  const { data: row, error } = await admin.from('psn_links').select('*').eq('user_id', userId).maybeSingle();
-  if (error) throw error;
-  if (!row) return { status: 'unlinked' };
+  const { data: row, error } = await admin
+    .from('psn_links')
+    .select('*')
+    .eq('user_id', userId)
+    .maybeSingle();
+  if (error) {
+    throw error;
+  }
+  if (!row) {
+    return { status: 'unlinked' };
+  }
   try {
     const accessToken = await getAccessToken(await decrypt(row.npsso_encrypted));
-    if (titleId) return { status: 'ok', raw: await getRawTrophyResponses(accessToken, titleId as string) };
+    if (titleId) {
+      return { status: 'ok', raw: await getRawTrophyResponses(accessToken, titleId as string) };
+    }
     const titles = await getRawGameTitles(accessToken);
     return { status: 'ok', raw: { totalItemCount: titles.length, titles } };
   } catch (err) {
@@ -407,15 +500,24 @@ async function raw(userId: string, titleId: unknown): Promise<ActionResult> {
 
 Deno.serve(async (request) => {
   const headers = corsHeaders(request);
-  if (request.method === 'OPTIONS') return new Response('ok', { headers });
+  if (request.method === 'OPTIONS') {
+    return new Response('ok', { headers });
+  }
 
   const json = (body: Record<string, unknown>, status = 200) =>
-    new Response(JSON.stringify(body), { status, headers: { ...headers, 'Content-Type': 'application/json' } });
+    new Response(JSON.stringify(body), {
+      status,
+      headers: { ...headers, 'Content-Type': 'application/json' },
+    });
 
   try {
     const jwt = (request.headers.get('authorization') || '').replace(/^Bearer /, '');
-    const { data: { user } } = await admin.auth.getUser(jwt);
-    if (!user) return json({ error: 'Not signed in.' }, 401);
+    const {
+      data: { user },
+    } = await admin.auth.getUser(jwt);
+    if (!user) {
+      return json({ error: 'Not signed in.' }, 401);
+    }
 
     const body = await request.json().catch(() => ({}));
     switch (body.action) {
@@ -426,7 +528,11 @@ Deno.serve(async (request) => {
         return json(result, httpStatus || 200);
       }
       case 'trophies': {
-        const { httpStatus, ...result } = await trophies(user.id, body.titleId, Boolean(body.refresh));
+        const { httpStatus, ...result } = await trophies(
+          user.id,
+          body.titleId,
+          Boolean(body.refresh),
+        );
         return json(result, httpStatus || 200);
       }
       case 'raw': {
@@ -435,9 +541,16 @@ Deno.serve(async (request) => {
       }
       case 'unlink': {
         const { error } = await admin.from('psn_links').delete().eq('user_id', user.id);
-        if (error) throw error;
-        const { error: trophyError } = await admin.from('psn_trophies').delete().eq('user_id', user.id);
-        if (trophyError) throw trophyError;
+        if (error) {
+          throw error;
+        }
+        const { error: trophyError } = await admin
+          .from('psn_trophies')
+          .delete()
+          .eq('user_id', user.id);
+        if (trophyError) {
+          throw trophyError;
+        }
         return json({ status: 'unlinked' });
       }
       default:

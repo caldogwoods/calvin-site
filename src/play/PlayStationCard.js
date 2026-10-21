@@ -10,8 +10,16 @@ const PAGE_SIZE = 25;
 const SSO_COOKIE_URL = 'https://ca.account.sony.com/api/v1/ssocookie';
 
 const SORTS = [
-  { key: 'recent', label: 'Recent', compare: (a, b) => (b.lastPlayed || '').localeCompare(a.lastPlayed || '') },
-  { key: 'most', label: 'Most played', compare: (a, b) => (b.playMinutes || 0) - (a.playMinutes || 0) },
+  {
+    key: 'recent',
+    label: 'Recent',
+    compare: (a, b) => (b.lastPlayed || '').localeCompare(a.lastPlayed || ''),
+  },
+  {
+    key: 'most',
+    label: 'Most played',
+    compare: (a, b) => (b.playMinutes || 0) - (a.playMinutes || 0),
+  },
   {
     key: 'name',
     label: 'A–Z',
@@ -20,14 +28,24 @@ const SORTS = [
 ];
 
 function formatHours(minutes) {
-  if (!minutes) return '0h';
-  if (minutes < 60) return `${minutes}m`;
+  if (!minutes) {
+    return '0h';
+  }
+  if (minutes < 60) {
+    return `${minutes}m`;
+  }
   return `${Math.round(minutes / 60).toLocaleString()}h`;
 }
 
 function formatDate(iso) {
-  if (!iso) return '—';
-  return new Date(iso).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+  if (!iso) {
+    return '—';
+  }
+  return new Date(iso).toLocaleDateString(undefined, {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  });
 }
 
 // Accepts the bare token or the whole {"npsso":"..."} text from the Sony page
@@ -35,7 +53,9 @@ function extractNpsso(text) {
   const trimmed = text.trim();
   try {
     const parsed = JSON.parse(trimmed);
-    if (parsed && typeof parsed.npsso === 'string') return parsed.npsso;
+    if (parsed && typeof parsed.npsso === 'string') {
+      return parsed.npsso;
+    }
   } catch {
     // Not JSON; use the text as is
   }
@@ -45,9 +65,24 @@ function extractNpsso(text) {
 function GameCover({ src, name }) {
   const [failed, setFailed] = useState(false);
   if (!src || failed) {
-    return <div className="ph-cover ph-cover-placeholder" aria-hidden="true">🎮</div>;
+    return (
+      <div className="ph-cover ph-cover-placeholder" aria-hidden="true">
+        🎮
+      </div>
+    );
   }
-  return <img className="ph-cover" src={src} alt="" loading="lazy" onError={() => setFailed(true)} title={name} />;
+  return (
+    <img
+      className="ph-cover"
+      src={src}
+      alt=""
+      loading="lazy"
+      onError={() => {
+        setFailed(true);
+      }}
+      title={name}
+    />
+  );
 }
 
 function ConnectPanel({ reconnect, onConnected, onCancel }) {
@@ -68,18 +103,32 @@ function ConnectPanel({ reconnect, onConnected, onCancel }) {
     }
   };
 
+  let submitLabel = 'Connect';
+  if (busy) {
+    submitLabel = 'Connecting…';
+  } else if (reconnect) {
+    submitLabel = 'Reconnect';
+  }
+
   return (
     <form className="ph-connect" onSubmit={handleSubmit}>
-      <h4>{reconnect ? 'Reconnect your PlayStation account' : 'Connect your PlayStation account'}</h4>
+      <h4>
+        {reconnect ? 'Reconnect your PlayStation account' : 'Connect your PlayStation account'}
+      </h4>
       <ol>
         <li>
           Sign in at{' '}
-          <a href="https://www.playstation.com/" target="_blank" rel="noreferrer">playstation.com ↗</a>.
+          <a href="https://www.playstation.com/" target="_blank" rel="noreferrer">
+            playstation.com ↗
+          </a>
+          .
         </li>
         <li>
           In the same browser, open{' '}
-          <a href={SSO_COOKIE_URL} target="_blank" rel="noreferrer">your sign-in token ↗</a>. The page
-          shows <code>{'{"npsso":"…"}'}</code>.
+          <a href={SSO_COOKIE_URL} target="_blank" rel="noreferrer">
+            your sign-in token ↗
+          </a>
+          . The page shows <code>{'{"npsso":"…"}'}</code>.
         </li>
         <li>Copy the value (or the whole text) and paste it here.</li>
       </ol>
@@ -91,12 +140,14 @@ function ConnectPanel({ reconnect, onConnected, onCancel }) {
           placeholder="Paste your NPSSO token"
           aria-label="NPSSO token"
           value={value}
-          onChange={(e) => setValue(e.target.value)}
+          onChange={(e) => {
+            setValue(e.target.value);
+          }}
           required
           disabled={busy}
         />
         <button type="submit" className="ph-primary" disabled={busy || !value.trim()}>
-          {busy ? 'Connecting…' : reconnect ? 'Reconnect' : 'Connect'}
+          {submitLabel}
         </button>
         {onCancel && (
           <button type="button" className="ph-text-button" onClick={onCancel} disabled={busy}>
@@ -168,7 +219,8 @@ function GameList({ games }) {
                 <span className="ph-meta">
                   <span className="ph-chip">{game.platform}</span>
                   <span>
-                    <span className="ph-date-label">First played</span> {formatDate(game.firstPlayed)}
+                    <span className="ph-date-label">First played</span>{' '}
+                    {formatDate(game.firstPlayed)}
                   </span>
                   <span>
                     <span className="ph-date-label">Last played</span> {formatDate(game.lastPlayed)}
@@ -181,7 +233,9 @@ function GameList({ games }) {
                   {game.playCount.toLocaleString()} {game.playCount === 1 ? 'session' : 'sessions'}
                 </span>
               </div>
-              <span className="ph-row-arrow" aria-hidden="true">›</span>
+              <span className="ph-row-arrow" aria-hidden="true">
+                ›
+              </span>
             </Link>
           </li>
         ))}
@@ -190,7 +244,13 @@ function GameList({ games }) {
       {shown.length === 0 && <p className="ph-no-results">No games match “{query}”.</p>}
 
       {visible < shown.length && (
-        <button type="button" className="ph-more" onClick={() => setVisible((v) => v + PAGE_SIZE)}>
+        <button
+          type="button"
+          className="ph-more"
+          onClick={() => {
+            setVisible((v) => v + PAGE_SIZE);
+          }}
+        >
           Show more ({(shown.length - visible).toLocaleString()} left)
         </button>
       )}
@@ -211,9 +271,11 @@ export default function PlayStationCard() {
   const show = useCallback(
     (result) => {
       setData(result);
-      if (result.status !== 'unlinked') writeCache(user.id, 'games', result);
+      if (result.status !== 'unlinked') {
+        writeCache(user.id, 'games', result);
+      }
     },
-    [user.id]
+    [user.id],
   );
 
   const load = useCallback(
@@ -224,15 +286,17 @@ export default function PlayStationCard() {
       } catch (err) {
         setLoadError(err.message);
       }
-      console.log("data", show);
+      console.log('data', show);
     },
-    [show]
+    [show],
   );
 
   // Ask the server only when nothing is saved in this browser; after that, data
   // changes only when the user clicks Refresh
   useEffect(() => {
-    if (!readCache(user.id, 'games')) load();
+    if (!readCache(user.id, 'games')) {
+      load();
+    }
   }, [load, user.id]);
 
   const refresh = async () => {
@@ -242,7 +306,13 @@ export default function PlayStationCard() {
   };
 
   const disconnect = async () => {
-    if (!window.confirm('Disconnect your PlayStation account? This deletes your saved token and game list.')) return;
+    if (
+      !window.confirm(
+        'Disconnect your PlayStation account? This deletes your saved token and game list.',
+      )
+    ) {
+      return;
+    }
     setBusy('disconnect');
     try {
       setData(await unlinkPsn());
@@ -262,13 +332,25 @@ export default function PlayStationCard() {
     setReconnecting(false);
   };
 
+  const cancelReconnect = () => {
+    setReconnecting(false);
+  };
+
   if (!data) {
     return (
       <div className="play-history-empty">
         {loadError ? (
           <>
             <p className="ph-error">{loadError}</p>
-            <button type="button" className="ph-primary" onClick={() => load()}>Try again</button>
+            <button
+              type="button"
+              className="ph-primary"
+              onClick={() => {
+                load();
+              }}
+            >
+              Try again
+            </button>
           </>
         ) : (
           <p>Loading your PlayStation history…</p>
@@ -298,7 +380,7 @@ export default function PlayStationCard() {
         <ConnectPanel
           reconnect
           onConnected={connected}
-          onCancel={expired ? undefined : () => setReconnecting(false)}
+          onCancel={expired ? undefined : cancelReconnect}
         />
       )}
 
@@ -319,11 +401,23 @@ export default function PlayStationCard() {
             </button>
           )}
           {!expired && !reconnecting && (
-            <button type="button" className="ph-text-button" onClick={() => setReconnecting(true)} disabled={!!busy}>
+            <button
+              type="button"
+              className="ph-text-button"
+              onClick={() => {
+                setReconnecting(true);
+              }}
+              disabled={!!busy}
+            >
               Reconnect
             </button>
           )}
-          <button type="button" className="ph-text-button danger" onClick={disconnect} disabled={!!busy}>
+          <button
+            type="button"
+            className="ph-text-button danger"
+            onClick={disconnect}
+            disabled={!!busy}
+          >
             {busy === 'disconnect' ? 'Disconnecting…' : 'Disconnect'}
           </button>
           {isAdmin && <DebugPanel name="psn-games" saved={data} loadRaw={() => getPsnRaw()} />}

@@ -7,7 +7,9 @@
   font-size: 12px;
   color: var(--text-muted);
   cursor: pointer;
-  transition: color 0.2s, border-color 0.2s;
+  transition:
+    color 0.2s,
+    border-color 0.2s;
 }
 
 .debug-open:hover {
@@ -36,8 +38,14 @@
 }
 
 @keyframes debug-in {
-  from { transform: translateX(24px); opacity: 0; }
-  to { transform: none; opacity: 1; }
+  from {
+    transform: translateX(24px);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
 }
 
 .debug-header {
@@ -152,12 +160,24 @@
   color: var(--text-subtle);
 }
 
-.json-key { color: #7a3fb0; }
-.json-string { color: #1f7a4c; }
-.json-number { color: #0060b6; }
-.json-boolean { color: #b26a00; }
-.json-null { color: var(--text-subtle); }
-.json-summary { color: var(--text-subtle); }
+.json-key {
+  color: #7a3fb0;
+}
+.json-string {
+  color: #1f7a4c;
+}
+.json-number {
+  color: #0060b6;
+}
+.json-boolean {
+  color: #b26a00;
+}
+.json-null {
+  color: var(--text-subtle);
+}
+.json-summary {
+  color: var(--text-subtle);
+}
 
 .json-more {
   margin-top: 2px;

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
+import { Routes, Route, Link, Navigate, useLocation } from 'react-router-dom';
 import logo from './assets/calvin-hobbes.jpg';
 import './App.css';
-import { Routes, Route, Link, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import LotrMap from './lotr/LotrMap';
 import MediaReviews from './media/MediaReviews';
@@ -25,9 +25,7 @@ function Home() {
     <div className="App">
       <header className="App-header">
         <img src={logo} alt="calvin and hobbes" />
-        <p>
-          A personal site by Calvin Woods.
-        </p>
+        <p>A personal site by Calvin Woods.</p>
       </header>
     </div>
   );
@@ -40,9 +38,15 @@ function Navigation() {
   const [accountMenuOpen, setAccountMenuOpen] = useState(false);
   const accountMenuRef = React.useRef(null);
 
-  const toggleMenu = () => setMobileMenuOpen(!mobileMenuOpen);
-  const closeMenu = () => setMobileMenuOpen(false);
-  const toggleAccountMenu = () => setAccountMenuOpen(!accountMenuOpen);
+  const toggleMenu = () => {
+    setMobileMenuOpen(!mobileMenuOpen);
+  };
+  const closeMenu = () => {
+    setMobileMenuOpen(false);
+  };
+  const toggleAccountMenu = () => {
+    setAccountMenuOpen(!accountMenuOpen);
+  };
 
   // Close account menu when clicking outside
   React.useEffect(() => {
@@ -64,30 +68,44 @@ function Navigation() {
     <nav className="App-nav">
       <div className="nav-container">
         <Link to="." className="nav-logo" onClick={closeMenu}>
-          Calvin's Site
+          Calvin’s Site
         </Link>
 
-        <button className="nav-hamburger" onClick={toggleMenu} aria-label="Toggle menu">
-          <span className={`hamburger-line ${mobileMenuOpen ? 'open' : ''}`}></span>
-          <span className={`hamburger-line ${mobileMenuOpen ? 'open' : ''}`}></span>
-          <span className={`hamburger-line ${mobileMenuOpen ? 'open' : ''}`}></span>
+        <button
+          type="button"
+          className="nav-hamburger"
+          onClick={toggleMenu}
+          aria-label="Toggle menu"
+        >
+          <span className={`hamburger-line ${mobileMenuOpen ? 'open' : ''}`} />
+          <span className={`hamburger-line ${mobileMenuOpen ? 'open' : ''}`} />
+          <span className={`hamburger-line ${mobileMenuOpen ? 'open' : ''}`} />
         </button>
 
         <div className={`nav-links ${mobileMenuOpen ? 'mobile-open' : ''}`}>
-          <Link to="." onClick={closeMenu}>Home</Link>
-          <Link to="media-reviews" onClick={closeMenu}>Media Reviews</Link>
-          <Link to="exercise-tracker" onClick={closeMenu}>Exercise Tracker</Link>
-          <Link to="play-history" onClick={closeMenu}>Play History</Link>
+          <Link to="." onClick={closeMenu}>
+            Home
+          </Link>
+          <Link to="media-reviews" onClick={closeMenu}>
+            Media Reviews
+          </Link>
+          <Link to="exercise-tracker" onClick={closeMenu}>
+            Exercise Tracker
+          </Link>
+          <Link to="play-history" onClick={closeMenu}>
+            Play History
+          </Link>
           {/* <Link to="lotr-map" onClick={closeMenu}>LOTR Map</Link> */}
           {user ? (
             <div className="nav-account-wrapper" ref={accountMenuRef}>
-              <button onClick={toggleAccountMenu} className="nav-account-btn">
+              <button type="button" onClick={toggleAccountMenu} className="nav-account-btn">
                 Account ▾
               </button>
               {accountMenuOpen && (
                 <div className="account-dropdown">
                   <div className="account-dropdown-username">{user.email.split('@')[0]}</div>
                   <button
+                    type="button"
                     onClick={() => {
                       signOut();
                       closeMenu();
@@ -104,7 +122,11 @@ function Navigation() {
             // Come back to this page after logging in (unless already on login/register)
             <Link
               to="login"
-              state={['/login', '/register'].includes(location.pathname) ? location.state : { from: location }}
+              state={
+                ['/login', '/register'].includes(location.pathname)
+                  ? location.state
+                  : { from: location }
+              }
               onClick={closeMenu}
             >
               Login
@@ -141,7 +163,10 @@ function AppContent() {
             </AdminRoute>
           }
         />
-        <Route path="media-reviews/games/new" element={<Navigate to="/media-reviews/new?type=games" replace />} />
+        <Route
+          path="media-reviews/games/new"
+          element={<Navigate to="/media-reviews/new?type=games" replace />}
+        />
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
         <Route

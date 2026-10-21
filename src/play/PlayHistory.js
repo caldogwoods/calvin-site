@@ -21,7 +21,9 @@ export default function PlayHistory() {
         <section className="play-history-card nintendo">
           <h3>Nintendo</h3>
           <div className="play-history-empty">
-            <div className="play-history-empty-icon" aria-hidden="true">🕹️</div>
+            <div className="play-history-empty-icon" aria-hidden="true">
+              🕹️
+            </div>
             <p>Coming soon</p>
           </div>
         </section>

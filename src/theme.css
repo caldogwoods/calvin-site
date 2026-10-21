@@ -19,22 +19,22 @@
 /* Indigo: blue to purple (the base values; used when no palette is set) */
 :root {
   /* Brand */
-  --accent: #667eea;              /* buttons, focus rings, active tabs, links */
-  --accent-2: #764ba2;            /* second color of the gradients (nav bar, buttons) */
-  --accent-strong: #4c5bd4;       /* accent text on light backgrounds */
-  --accent-hover: #5568d3;        /* solid accent buttons on hover */
-  --accent-soft: #eef0fc;         /* chips, segmented controls, light accent backgrounds */
-  --accent-soft-hover: #e0e4fa;   /* hover on accent-soft, row highlight */
-  --surface-tint: #f7f7fb;        /* table headers, open rows, panels */
-  --surface-hover: #f9f9fe;       /* row hover */
+  --accent: #667eea; /* buttons, focus rings, active tabs, links */
+  --accent-2: #764ba2; /* second color of the gradients (nav bar, buttons) */
+  --accent-strong: #4c5bd4; /* accent text on light backgrounds */
+  --accent-hover: #5568d3; /* solid accent buttons on hover */
+  --accent-soft: #eef0fc; /* chips, segmented controls, light accent backgrounds */
+  --accent-soft-hover: #e0e4fa; /* hover on accent-soft, row highlight */
+  --surface-tint: #f7f7fb; /* table headers, open rows, panels */
+  --surface-hover: #f9f9fe; /* row hover */
 
   /* Neutrals */
-  --text: #2d3142;                /* headings and main text */
-  --text-body: #4a4e5e;           /* labels and secondary text */
-  --text-muted: #6b7080;          /* subtitles, descriptions */
-  --text-subtle: #9a9eae;         /* hints, placeholders, small labels */
-  --border: #ececf3;              /* lines between rows */
-  --border-strong: #dcdde6;       /* input borders, card dividers */
+  --text: #2d3142; /* headings and main text */
+  --text-body: #4a4e5e; /* labels and secondary text */
+  --text-muted: #6b7080; /* subtitles, descriptions */
+  --text-subtle: #9a9eae; /* hints, placeholders, small labels */
+  --border: #ececf3; /* lines between rows */
+  --border-strong: #dcdde6; /* input borders, card dividers */
 
   /* Made from the values above; no need to change */
   --gradient: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);

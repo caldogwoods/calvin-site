@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 import { returnPath } from './authRedirect';
 import './Auth.css';
 
@@ -18,11 +18,13 @@ export default function Register() {
     e.preventDefault();
 
     if (password !== confirmPassword) {
-      return setError('Passwords do not match');
+      setError('Passwords do not match');
+      return;
     }
 
     if (password.length < 6) {
-      return setError('Password must be at least 6 characters');
+      setError('Password must be at least 6 characters');
+      return;
     }
 
     try {
@@ -32,8 +34,8 @@ export default function Register() {
       const email = `${username}@local.app`;
       await signUp(email, password, username);
       navigate(returnPath(location), { replace: true });
-    } catch (error) {
-      setError('Failed to create account: ' + error.message);
+    } catch (err) {
+      setError(`Failed to create account: ${err.message}`);
     } finally {
       setLoading(false);
     }
@@ -51,7 +53,9 @@ export default function Register() {
               id="username"
               type="text"
               value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              onChange={(e) => {
+                setUsername(e.target.value);
+              }}
               required
               disabled={loading}
             />
@@ -62,7 +66,9 @@ export default function Register() {
               id="password"
               type="password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => {
+                setPassword(e.target.value);
+              }}
               required
               disabled={loading}
             />
@@ -73,7 +79,9 @@ export default function Register() {
               id="confirmPassword"
               type="password"
               value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
+              onChange={(e) => {
+                setConfirmPassword(e.target.value);
+              }}
               required
               disabled={loading}
             />
@@ -83,7 +91,10 @@ export default function Register() {
           </button>
         </form>
         <p className="auth-link">
-          Already have an account? <Link to="/login" state={location.state}>Login here</Link>
+          Already have an account?{' '}
+          <Link to="/login" state={location.state}>
+            Login here
+          </Link>
         </p>
       </div>
     </div>

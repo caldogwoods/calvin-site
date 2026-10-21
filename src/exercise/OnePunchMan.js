@@ -17,12 +17,20 @@ import './OnePunchMan.css';
 const HISTORY_DAYS = 14;
 
 function dayLabel(dateKey, today) {
-  if (dateKey === today) return 'Today';
-  if (dateKey === addDays(today, -1)) return 'Yesterday';
-  return fromDateKey(dateKey).toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric' });
+  if (dateKey === today) {
+    return 'Today';
+  }
+  if (dateKey === addDays(today, -1)) {
+    return 'Yesterday';
+  }
+  return fromDateKey(dateKey).toLocaleDateString(undefined, {
+    weekday: 'long',
+    month: 'short',
+    day: 'numeric',
+  });
 }
 
-function ProgressBar({ total, goal }) {
+function ProgressBar({ label, total, goal }) {
   const percent = Math.round((total / goal) * 100);
   const fillWidth = Math.min(percent, 100);
   return (
@@ -30,11 +38,15 @@ function ProgressBar({ total, goal }) {
       <div
         className="opm-progress-track"
         role="progressbar"
+        aria-label={label}
         aria-valuemin={0}
         aria-valuemax={goal}
         aria-valuenow={total}
       >
-        <div className={`opm-progress-fill ${percent >= 100 ? 'done' : ''}`} style={{ width: `${fillWidth}%` }} />
+        <div
+          className={`opm-progress-fill ${percent >= 100 ? 'done' : ''}`}
+          style={{ width: `${fillWidth}%` }}
+        />
       </div>
       <span className={`opm-percent ${percent > 100 ? 'over' : ''}`}>{percent}%</span>
     </div>
@@ -49,7 +61,9 @@ function ExerciseCard({ exercise, entries, onAdd, onRemove }) {
   const addCustom = (e) => {
     e.preventDefault();
     const amount = Math.round(Number(custom));
-    if (amount > 0) onAdd(exercise.key, amount);
+    if (amount > 0) {
+      onAdd(exercise.key, amount);
+    }
     setCustom('');
   };
 
@@ -63,12 +77,19 @@ function ExerciseCard({ exercise, entries, onAdd, onRemove }) {
         </span>
       </header>
 
-      <ProgressBar total={total} goal={exercise.goal} />
+      <ProgressBar label={`${exercise.label} progress`} total={total} goal={exercise.goal} />
       {extra > 0 && <p className="opm-extra">{formatAmount(exercise, extra)} over the goal</p>}
 
       <div className="opm-add">
         {exercise.chunks.map((amount) => (
-          <button key={amount} type="button" className="opm-chunk" onClick={() => onAdd(exercise.key, amount)}>
+          <button
+            key={amount}
+            type="button"
+            className="opm-chunk"
+            onClick={() => {
+              onAdd(exercise.key, amount);
+            }}
+          >
             {formatChunk(exercise, amount)}
           </button>
         ))}
@@ -78,11 +99,15 @@ function ExerciseCard({ exercise, entries, onAdd, onRemove }) {
             min="1"
             inputMode="numeric"
             value={custom}
-            onChange={(e) => setCustom(e.target.value)}
+            onChange={(e) => {
+              setCustom(e.target.value);
+            }}
             placeholder={exercise.unit}
             aria-label={`Custom ${exercise.label} amount in ${exercise.unit}`}
           />
-          <button type="submit" disabled={!custom}>Add</button>
+          <button type="submit" disabled={!custom}>
+            Add
+          </button>
         </form>
       </div>
 
@@ -93,7 +118,9 @@ function ExerciseCard({ exercise, entries, onAdd, onRemove }) {
               {formatChunk(exercise, entry.amount)}
               <button
                 type="button"
-                onClick={() => onRemove(entry.id)}
+                onClick={() => {
+                  onRemove(entry.id);
+                }}
                 aria-label={`Remove ${formatChunk(exercise, entry.amount)}`}
                 title="Remove"
               >
@@ -118,7 +145,9 @@ function History({ totals, today, selectedDay, onSelect }) {
             key={day}
             type="button"
             className={`opm-history-day ${day === selectedDay ? 'selected' : ''}`}
-            onClick={() => onSelect(day)}
+            onClick={() => {
+              onSelect(day);
+            }}
             title={`${dayLabel(day, today)}: ${met} of ${OPM_EXERCISES.length} goals`}
           >
             <span className="opm-history-weekday">
@@ -141,13 +170,16 @@ export default function OnePunchMan() {
   const [selectedDay, setSelectedDay] = useState(today);
 
   const fetchLogs = useCallback(async () => {
-    const { data, error } = await supabase
+    const { data, error: queryError } = await supabase
       .from('opm_logs')
       .select('id, exercise, amount, log_date')
       .eq('user_id', user.id)
       .order('created_at');
-    if (error) setError(`Could not load your log: ${error.message}`);
-    else setLogs(data);
+    if (queryError) {
+      setError(`Could not load your log: ${queryError.message}`);
+    } else {
+      setLogs(data);
+    }
     setLoading(false);
   }, [user.id]);
 
@@ -157,20 +189,26 @@ export default function OnePunchMan() {
 
   const addEntry = async (exercise, amount) => {
     setError('');
-    const { data, error } = await supabase
+    const { data, error: queryError } = await supabase
       .from('opm_logs')
       .insert({ user_id: user.id, exercise, amount, log_date: selectedDay })
       .select('id, exercise, amount, log_date')
       .single();
-    if (error) setError(`Could not save: ${error.message}`);
-    else setLogs((current) => [...current, data]);
+    if (queryError) {
+      setError(`Could not save: ${queryError.message}`);
+    } else {
+      setLogs((current) => [...current, data]);
+    }
   };
 
   const removeEntry = async (id) => {
     setError('');
-    const { error } = await supabase.from('opm_logs').delete().eq('id', id);
-    if (error) setError(`Could not remove: ${error.message}`);
-    else setLogs((current) => current.filter((log) => log.id !== id));
+    const { error: queryError } = await supabase.from('opm_logs').delete().eq('id', id);
+    if (queryError) {
+      setError(`Could not remove: ${queryError.message}`);
+    } else {
+      setLogs((current) => current.filter((log) => log.id !== id));
+    }
   };
 
   const totals = useMemo(() => totalsByDay(logs), [logs]);
@@ -179,7 +217,11 @@ export default function OnePunchMan() {
   const dayGoalsMet = goalsMet(totals[selectedDay]);
 
   if (loading) {
-    return <div className="opm-container"><p>Loading...</p></div>;
+    return (
+      <div className="opm-container">
+        <p>Loading...</p>
+      </div>
+    );
   }
 
   return (
@@ -187,7 +229,10 @@ export default function OnePunchMan() {
       <header className="opm-header">
         <div>
           <h2>One Punch Man Workout</h2>
-          <p className="opm-subtitle">100 push-ups, 100 sit-ups, 10 minutes of plank, 100 squats, and 1 hour of cardio. Every day.</p>
+          <p className="opm-subtitle">
+            100 push-ups, 100 sit-ups, 10 minutes of plank, 100 squats, and 1 hour of cardio. Every
+            day.
+          </p>
         </div>
         <div className="opm-streak" title="Days in a row with every goal met">
           <span className="opm-streak-number">{streak}</span>
@@ -200,7 +245,13 @@ export default function OnePunchMan() {
       <History totals={totals} today={today} selectedDay={selectedDay} onSelect={setSelectedDay} />
 
       <div className="opm-day">
-        <button type="button" onClick={() => setSelectedDay(addDays(selectedDay, -1))} aria-label="Previous day">
+        <button
+          type="button"
+          onClick={() => {
+            setSelectedDay(addDays(selectedDay, -1));
+          }}
+          aria-label="Previous day"
+        >
           ‹
         </button>
         <div className="opm-day-label">
@@ -212,7 +263,9 @@ export default function OnePunchMan() {
         </div>
         <button
           type="button"
-          onClick={() => setSelectedDay(addDays(selectedDay, 1))}
+          onClick={() => {
+            setSelectedDay(addDays(selectedDay, 1));
+          }}
           disabled={selectedDay === today}
           aria-label="Next day"
         >

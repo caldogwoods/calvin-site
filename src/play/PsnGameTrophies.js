@@ -69,10 +69,18 @@ const FILTERS = [
 
 // PlayStation's rarity bands
 function rarityLabel(rate) {
-  if (rate == null) return null;
-  if (rate <= 5) return 'Ultra rare';
-  if (rate <= 15) return 'Very rare';
-  if (rate <= 50) return 'Rare';
+  if (rate == null) {
+    return null;
+  }
+  if (rate <= 5) {
+    return 'Ultra rare';
+  }
+  if (rate <= 15) {
+    return 'Very rare';
+  }
+  if (rate <= 50) {
+    return 'Rare';
+  }
   return 'Common';
 }
 
@@ -91,14 +99,19 @@ const STILL_PLAYING_DAYS = 14;
 
 // ISO timestamp -> "YYYY-MM-DD" in the viewer's time zone (the form's date format)
 function toLocalDate(iso) {
-  if (!iso) return '';
+  if (!iso) {
+    return '';
+  }
   const d = new Date(iso);
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 }
 
 // Values for the game review form (AddReview.js), from what PSN knows about the game
 function reviewPrefill(listGame, game) {
-  const name = (listGame?.name || game?.name || '').replace(/[™®©]/g, '').replace(/\s+/g, ' ').trim();
+  const name = (listGame?.name || game?.name || '')
+    .replace(/[™®©]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
   const values = {
     name,
     platform: listGame?.platform || game?.platform || '',
@@ -107,19 +120,30 @@ function reviewPrefill(listGame, game) {
   };
   if (listGame?.lastPlayed) {
     const daysSince = (Date.now() - new Date(listGame.lastPlayed).getTime()) / 86400000;
-    if (daysSince <= STILL_PLAYING_DAYS) values.playedEndOngoing = true;
-    else values.playedEnd = toLocalDate(listGame.lastPlayed);
+    if (daysSince <= STILL_PLAYING_DAYS) {
+      values.playedEndOngoing = true;
+    } else {
+      values.playedEnd = toLocalDate(listGame.lastPlayed);
+    }
   }
   return { type: 'games', values, source: 'PlayStation' };
 }
 
 function formatDate(iso) {
-  return new Date(iso).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+  return new Date(iso).toLocaleDateString(undefined, {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  });
 }
 
 function formatHours(minutes) {
-  if (!minutes) return null;
-  if (minutes < 60) return `${minutes}m played`;
+  if (!minutes) {
+    return null;
+  }
+  if (minutes < 60) {
+    return `${minutes}m played`;
+  }
   return `${Math.round(minutes / 60).toLocaleString()}h played`;
 }
 
@@ -132,8 +156,8 @@ function sortTrophies(trophies, sortKey, dir) {
 
   const ranked = trophies.filter(hasValue).sort((a, b) => byValue(a, b) || byName(a, b));
   const unranked = trophies.filter((trophy) => !hasValue(trophy)).sort(byName);
-  console.log("ranked trophies:", ranked);
-  console.log("unranked trophies:", unranked);
+  console.log('ranked trophies:', ranked);
+  console.log('unranked trophies:', unranked);
   const sorted = [...ranked, ...unranked];
 
   const isPlatinum = (trophy) => trophy.type === 'platinum';
@@ -146,7 +170,9 @@ function TrophyRow({ trophy, groupName, reveal }) {
   return (
     <li className={`tr-row ${trophy.earned ? 'earned' : 'unearned'}`}>
       {concealed ? (
-        <div className="tr-icon tr-icon-hidden" aria-hidden="true">?</div>
+        <div className="tr-icon tr-icon-hidden" aria-hidden="true">
+          ?
+        </div>
       ) : (
         <img className="tr-icon" src={trophy.iconUrl} alt="" loading="lazy" />
       )}
@@ -166,7 +192,9 @@ function TrophyRow({ trophy, groupName, reveal }) {
             {trophy.earnedRate}% · {rarity}
           </span>
         )}
-        <span className="tr-earned">{trophy.earned ? formatDateTime(trophy.earnedAt) : 'Not earned'}</span>
+        <span className="tr-earned">
+          {trophy.earned ? formatDateTime(trophy.earnedAt) : 'Not earned'}
+        </span>
       </div>
     </li>
   );
@@ -191,19 +219,31 @@ export default function PsnGameTrophies() {
   const show = useCallback(
     (result) => {
       setData(result);
-      if (result.status === 'ok') writeCache(user.id, cacheName, result);
+      if (result.status === 'ok') {
+        writeCache(user.id, cacheName, result);
+      }
     },
-    [user.id, cacheName]
+    [user.id, cacheName],
   );
 
   // Ask the server only when nothing is saved in this browser; after that, data
   // changes only when the user clicks Refresh
   useEffect(() => {
-    if (readCache(user.id, cacheName)) return undefined;
+    if (readCache(user.id, cacheName)) {
+      return undefined;
+    }
     let cancelled = false;
     getPsnTrophies(titleId)
-      .then((result) => !cancelled && show(result))
-      .catch((err) => !cancelled && setError(err.message));
+      .then((result) => {
+        if (!cancelled) {
+          show(result);
+        }
+      })
+      .catch((err) => {
+        if (!cancelled) {
+          setError(err.message);
+        }
+      });
     return () => {
       cancelled = true;
     };
@@ -224,11 +264,13 @@ export default function PsnGameTrophies() {
   const game = data?.game;
 
   const shown = useMemo(() => {
-    if (!game) return [];
+    if (!game) {
+      return [];
+    }
     const filtered = game.trophies.filter(
       (t) =>
         (filter === 'all' || (filter === 'earned') === t.earned) &&
-        (group === 'all' || t.groupId === group)
+        (group === 'all' || t.groupId === group),
     );
     return sortTrophies(filtered, sortKey, dir);
   }, [game, filter, group, sortKey, dir]);
@@ -239,7 +281,10 @@ export default function PsnGameTrophies() {
   };
 
   const currentSort = SORTS.find((s) => s.key === sortKey);
-  const groupNames = game && game.groups.length > 1 ? Object.fromEntries(game.groups.map((g) => [g.id, g.name])) : null;
+  const groupNames =
+    game && game.groups.length > 1
+      ? Object.fromEntries(game.groups.map((g) => [g.id, g.name]))
+      : null;
   const hasHidden = game?.trophies.some((t) => t.hidden && !t.earned);
 
   let body;
@@ -250,7 +295,9 @@ export default function PsnGameTrophies() {
   } else if (data.status === 'unlinked' || (data.status === 'expired' && !game)) {
     body = (
       <p className="tr-message">
-        {data.status === 'expired' ? 'Your PlayStation sign-in expired.' : 'Your PlayStation account is not connected.'}{' '}
+        {data.status === 'expired'
+          ? 'Your PlayStation sign-in expired.'
+          : 'Your PlayStation account is not connected.'}{' '}
         <Link to="/play-history">Go to Play History</Link> to connect it.
       </p>
     );
@@ -261,7 +308,8 @@ export default function PsnGameTrophies() {
       <>
         {data.status === 'expired' && (
           <div className="ph-banner">
-            Your PlayStation sign-in expired. <Link to="/play-history">Reconnect on Play History</Link> to refresh.
+            Your PlayStation sign-in expired.{' '}
+            <Link to="/play-history">Reconnect on Play History</Link> to refresh.
           </div>
         )}
         {(error || data.warning) && <div className="ph-banner">{error || data.warning}</div>}
@@ -273,7 +321,9 @@ export default function PsnGameTrophies() {
                 type="button"
                 className={sort.key === sortKey ? 'active' : ''}
                 aria-pressed={sort.key === sortKey}
-                onClick={() => chooseSort(sort)}
+                onClick={() => {
+                  chooseSort(sort);
+                }}
               >
                 {sort.label}
               </button>
@@ -282,7 +332,9 @@ export default function PsnGameTrophies() {
           <button
             type="button"
             className="tr-direction"
-            onClick={() => setDir((d) => (d === 'asc' ? 'desc' : 'asc'))}
+            onClick={() => {
+              setDir((d) => (d === 'asc' ? 'desc' : 'asc'));
+            }}
             title="Reverse the order"
           >
             <span aria-hidden="true">⇅</span> {currentSort.dirLabels[dir]}
@@ -297,23 +349,40 @@ export default function PsnGameTrophies() {
                 type="button"
                 className={f.key === filter ? 'active' : ''}
                 aria-pressed={f.key === filter}
-                onClick={() => setFilter(f.key)}
+                onClick={() => {
+                  setFilter(f.key);
+                }}
               >
                 {f.label}
               </button>
             ))}
           </div>
           {groupNames && (
-            <select className="tr-select" value={group} onChange={(e) => setGroup(e.target.value)} aria-label="Content">
+            <select
+              className="tr-select"
+              value={group}
+              onChange={(e) => {
+                setGroup(e.target.value);
+              }}
+              aria-label="Content"
+            >
               <option value="all">All content</option>
               {game.groups.map((g) => (
-                <option key={g.id} value={g.id}>{g.name}</option>
+                <option key={g.id} value={g.id}>
+                  {g.name}
+                </option>
               ))}
             </select>
           )}
           {hasHidden && (
             <label className="tr-reveal">
-              <input type="checkbox" checked={reveal} onChange={(e) => setReveal(e.target.checked)} />
+              <input
+                type="checkbox"
+                checked={reveal}
+                onChange={(e) => {
+                  setReveal(e.target.checked);
+                }}
+              />
               Reveal hidden trophies
             </label>
           )}
@@ -343,13 +412,22 @@ export default function PsnGameTrophies() {
   return (
     <div className="play-history-container">
       <div className="tr-topbar">
-        <Link to="/play-history" className="tr-back">← Play History</Link>
+        <Link to="/play-history" className="tr-back">
+          ← Play History
+        </Link>
         <div className="tr-topbar-actions">
           {isAdmin && (
-            <DebugPanel name={`psn-trophies-${titleId}`} saved={data} loadRaw={() => getPsnRaw(titleId)} />
+            <DebugPanel
+              name={`psn-trophies-${titleId}`}
+              saved={data}
+              loadRaw={() => getPsnRaw(titleId)}
+            />
           )}
           {existingReview ? (
-            <Link to={`/media-reviews/games?open=${existingReview.id}`} className="tr-review-button">
+            <Link
+              to={`/media-reviews/games?open=${existingReview.id}`}
+              className="tr-review-button"
+            >
               <span aria-hidden="true">★</span> View review
             </Link>
           ) : (
@@ -370,7 +448,11 @@ export default function PsnGameTrophies() {
 
       <section className="play-history-card playstation">
         <div className="tr-header">
-          {cover ? <img className="tr-cover" src={cover} alt="" /> : <div className="tr-cover ph-cover-placeholder">🎮</div>}
+          {cover ? (
+            <img className="tr-cover" src={cover} alt="" />
+          ) : (
+            <div className="tr-cover ph-cover-placeholder">🎮</div>
+          )}
           <div className="tr-heading">
             <h2>{name}</h2>
             <div className="tr-subline">
@@ -382,7 +464,12 @@ export default function PsnGameTrophies() {
             {data?.updatedAt && (
               <div className="tr-updated">
                 Updated {formatDate(data.updatedAt)}
-                <button type="button" className="ph-text-button" onClick={refresh} disabled={refreshing}>
+                <button
+                  type="button"
+                  className="ph-text-button"
+                  onClick={refresh}
+                  disabled={refreshing}
+                >
                   {refreshing ? 'Refreshing…' : 'Refresh'}
                 </button>
               </div>
@@ -396,7 +483,9 @@ export default function PsnGameTrophies() {
                   <span>{game.progress}%</span>
                 </div>
                 <div className="tr-counts">
-                  <span className="tr-count-total">{earnedTotal} / {definedTotal} trophies</span>
+                  <span className="tr-count-total">
+                    {earnedTotal} / {definedTotal} trophies
+                  </span>
                   {TYPE_ORDER.filter((type) => game.definedCounts[type]).map((type) => (
                     <span key={type} className="tr-count">
                       <span className={`tr-dot ${type}`} aria-hidden="true" />

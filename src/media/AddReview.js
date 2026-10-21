@@ -18,7 +18,8 @@ function emptyForm(type) {
       form[field.endKey] = '';
       form[ongoingKey(field)] = false;
     } else if (field.type === 'select') {
-      form[field.key] = field.options[0];
+      const [firstOption] = field.options;
+      form[field.key] = firstOption;
     } else {
       form[field.key] = '';
     }
@@ -33,16 +34,25 @@ function toEntry(type, form) {
     if (field.type === 'range') {
       const start = form[field.startKey] || null;
       entry[field.startKey] = start;
-      if (field.singleIf && field.singleIf(form)) entry[field.endKey] = start;
-      else if (form[ongoingKey(field)]) entry[field.endKey] = null;
-      else entry[field.endKey] = form[field.endKey] || null;
+      if (field.singleIf && field.singleIf(form)) {
+        entry[field.endKey] = start;
+      } else if (form[ongoingKey(field)]) {
+        entry[field.endKey] = null;
+      } else {
+        entry[field.endKey] = form[field.endKey] || null;
+      }
       return;
     }
     const value = form[field.key];
-    if (field.showIf && !field.showIf(form)) entry[field.key] = null;
-    else if (field.type === 'number') entry[field.key] = value === '' ? null : Number(value);
-    else if (field.type === 'date') entry[field.key] = value || null;
-    else entry[field.key] = typeof value === 'string' ? value.trim() : value;
+    if (field.showIf && !field.showIf(form)) {
+      entry[field.key] = null;
+    } else if (field.type === 'number') {
+      entry[field.key] = value === '' ? null : Number(value);
+    } else if (field.type === 'date') {
+      entry[field.key] = value || null;
+    } else {
+      entry[field.key] = typeof value === 'string' ? value.trim() : value;
+    }
   });
   return entry;
 }
@@ -51,12 +61,18 @@ function toEntry(type, form) {
 function uniqueId(type, entry) {
   const ids = new Set(MEDIA_TYPES[type].entries.map((e) => e.id));
   const base = slugify(entry.name || '') || type;
-  if (!ids.has(base)) return base;
+  if (!ids.has(base)) {
+    return base;
+  }
   const range = MEDIA_TYPES[type].fields.find((field) => field.type === 'range');
   const year = range && entry[range.startKey] && entry[range.startKey].slice(0, 4);
-  if (year && !ids.has(`${base}-${year}`)) return `${base}-${year}`;
+  if (year && !ids.has(`${base}-${year}`)) {
+    return `${base}-${year}`;
+  }
   let n = 2;
-  while (ids.has(`${base}-${n}`)) n += 1;
+  while (ids.has(`${base}-${n}`)) {
+    n += 1;
+  }
   return `${base}-${n}`;
 }
 
@@ -74,7 +90,9 @@ function CommitDialog({ path, content, onKeepEditing, onDone }) {
 
   useEffect(() => {
     // React StrictMode runs effects twice in dev, and showModal throws if already open
-    if (!dialogRef.current.open) dialogRef.current.showModal();
+    if (!dialogRef.current.open) {
+      dialogRef.current.showModal();
+    }
   }, []);
 
   const copy = async () => {
@@ -95,11 +113,13 @@ function CommitDialog({ path, content, onKeepEditing, onDone }) {
       </p>
       {tooLong && (
         <p className="json-dialog-note">
-          This entry is long, and GitHub may not accept it in a link. If the file opens empty,
-          copy the JSON and paste it in.
+          This entry is long, and GitHub may not accept it in a link. If the file opens empty, copy
+          the JSON and paste it in.
         </p>
       )}
-      <p className="json-dialog-path"><code>{path}</code></p>
+      <p className="json-dialog-path">
+        <code>{path}</code>
+      </p>
       <pre className="json-output">{content}</pre>
       <div className="json-dialog-actions">
         <button type="button" className="dialog-button secondary" onClick={onKeepEditing}>
@@ -119,14 +139,14 @@ function CommitDialog({ path, content, onKeepEditing, onDone }) {
   );
 }
 
-function SuggestInput({ id, type, field, ...props }) {
+function SuggestInput({ id, type, field, value, onChange, required }) {
   const options = useMemo(() => distinct(type, field.key), [type, field.key]);
   return (
     <>
-      <input id={id} list={`${id}-options`} {...props} />
+      <input id={id} list={`${id}-options`} value={value} onChange={onChange} required={required} />
       <datalist id={`${id}-options`}>
         {options.map((option) => (
-          <option key={option} value={option} />
+          <option key={option} value={option} aria-label={option} />
         ))}
       </datalist>
     </>
@@ -134,7 +154,9 @@ function SuggestInput({ id, type, field, ...props }) {
 }
 
 function Field({ type, field, form, update }) {
-  if (field.showIf && !field.showIf(form)) return null;
+  if (field.showIf && !field.showIf(form)) {
+    return null;
+  }
 
   if (field.type === 'range') {
     const single = field.singleIf && field.singleIf(form);
@@ -179,29 +201,54 @@ function Field({ type, field, form, update }) {
   }
 
   const id = `${type}-${field.key}`;
-  const common = {
-    id,
-    value: form[field.key],
-    onChange: update(field.key),
-    required: field.required,
-  };
+  const value = form[field.key];
+  const onChange = update(field.key);
 
   let input;
   if (field.type === 'textarea') {
-    input = <textarea rows="6" placeholder={field.placeholder} {...common} />;
+    input = (
+      <textarea
+        id={id}
+        rows="6"
+        placeholder={field.placeholder}
+        value={value}
+        onChange={onChange}
+        required={field.required}
+      />
+    );
   } else if (field.type === 'select') {
     input = (
-      <select {...common}>
+      <select id={id} value={value} onChange={onChange} required={field.required}>
         {field.options.map((option) => (
-          <option key={option} value={option}>{option}</option>
+          <option key={option} value={option}>
+            {option}
+          </option>
         ))}
       </select>
     );
   } else if (field.suggest) {
-    input = <SuggestInput type={type} field={field} {...common} />;
+    input = (
+      <SuggestInput
+        id={id}
+        type={type}
+        field={field}
+        value={value}
+        onChange={onChange}
+        required={field.required}
+      />
+    );
   } else {
     input = (
-      <input type={field.type} min={field.min} max={field.max} step={field.step} {...common} />
+      <input
+        id={id}
+        type={field.type}
+        min={field.min}
+        max={field.max}
+        step={field.step}
+        value={value}
+        onChange={onChange}
+        required={field.required}
+      />
     );
   }
 
@@ -229,12 +276,14 @@ export default function AddReview() {
         const form = emptyForm(key);
         if (prefill?.type === key) {
           Object.entries(prefill.values).forEach(([field, value]) => {
-            if (field in form && value != null) form[field] = value;
+            if (field in form && value != null) {
+              form[field] = value;
+            }
           });
         }
         return [key, form];
-      })
-    )
+      }),
+    ),
   );
   const [status, setStatus] = useState(null); // { type: 'error', message }
   const [imageFailed, setImageFailed] = useState(false);
@@ -252,7 +301,9 @@ export default function AddReview() {
   const update = (key) => (e) => {
     const value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
     setForms((prev) => ({ ...prev, [type]: { ...prev[type], [key]: value } }));
-    if (key === 'imageUrl') setImageFailed(false);
+    if (key === 'imageUrl') {
+      setImageFailed(false);
+    }
   };
 
   const handleSubmit = (e) => {
@@ -284,9 +335,13 @@ export default function AddReview() {
       <header className="add-review-header">
         <div>
           <h2>Add a Review</h2>
-          <p className="add-review-subtitle">Each review is saved as a file in the site's GitHub repo.</p>
+          <p className="add-review-subtitle">
+            Each review is saved as a file in the site’s GitHub repo.
+          </p>
         </div>
-        <Link to={`/media-reviews/${type}`} className="back-link">View reviews →</Link>
+        <Link to={`/media-reviews/${type}`} className="back-link">
+          View reviews →
+        </Link>
       </header>
 
       <div className="type-switch" role="radiogroup" aria-label="Review type">
@@ -297,7 +352,9 @@ export default function AddReview() {
               name="review-type"
               value={key}
               checked={key === type}
-              onChange={() => setType(key)}
+              onChange={() => {
+                setType(key);
+              }}
             />
             <span aria-hidden="true">{MEDIA_TYPES[key].icon}</span>
             {MEDIA_TYPES[key].label}
@@ -337,7 +394,9 @@ export default function AddReview() {
               <img
                 src={entry.imageUrl}
                 alt={`${config.imageLabel} preview`}
-                onError={() => setImageFailed(true)}
+                onError={() => {
+                  setImageFailed(true);
+                }}
               />
             ) : (
               <div className={`preview-placeholder ${imageFailed ? 'failed' : ''}`}>
@@ -352,7 +411,9 @@ export default function AddReview() {
         <CommitDialog
           path={dialog.path}
           content={dialog.content}
-          onKeepEditing={() => setDialog(null)}
+          onKeepEditing={() => {
+            setDialog(null);
+          }}
           onDone={clearForm}
         />
       )}
