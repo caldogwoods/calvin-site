@@ -89,11 +89,11 @@ function Navigation() {
           <Link to="media-reviews" onClick={closeMenu}>
             Media Reviews
           </Link>
-          <Link to="exercise-tracker" onClick={closeMenu}>
-            Exercise Tracker
-          </Link>
           <Link to="play-history" onClick={closeMenu}>
             Play History
+          </Link>
+          <Link to="exercise-tracker" onClick={closeMenu}>
+            Exercise Tracker
           </Link>
           {/* <Link to="lotr-map" onClick={closeMenu}>LOTR Map</Link> */}
           {user ? (
