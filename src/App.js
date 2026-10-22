@@ -12,6 +12,7 @@ import ExerciseLayout from './exercise/ExerciseLayout';
 import ExerciseTracker from './exercise/ExerciseTracker';
 import OnePunchMan from './exercise/OnePunchMan';
 import ExerciseStats from './exercise/ExerciseStats';
+import LanguageStudy from './languages/LanguageStudy';
 import Login from './components/Login';
 import Register from './components/Register';
 import PlayHistory from './play/PlayHistory';
@@ -91,6 +92,9 @@ function Navigation() {
           </Link>
           <Link to="play-history" onClick={closeMenu}>
             Play History
+          </Link>
+          <Link to="language-study" onClick={closeMenu}>
+            Language Study
           </Link>
           <Link to="exercise-tracker" onClick={closeMenu}>
             Exercise Tracker
@@ -202,6 +206,12 @@ function AppContent() {
             <ProtectedRoute>
               <PsnGameTrophies />
             </ProtectedRoute>
+          }
+        />
+        <Route
+          path="language-study"
+          element={
+            <LanguageStudy />
           }
         />
       </Routes>

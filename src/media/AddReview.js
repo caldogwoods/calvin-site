@@ -109,7 +109,7 @@ function CommitDialog({ path, content, onKeepEditing, onDone }) {
       <h3>Commit on GitHub</h3>
       <p className="json-dialog-hint">
         Click <strong>Open on GitHub</strong>, then <strong>Commit changes</strong>. The site
-        updates about 2 minutes later.
+        updates about 2 minutes later once GitHub actions completes its process.
       </p>
       {tooLong && (
         <p className="json-dialog-note">
