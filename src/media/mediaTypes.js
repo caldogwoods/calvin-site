@@ -1,6 +1,4 @@
-import games from './games';
-import books from './books';
-import shows from './shows';
+import { games, books, shows } from './reviewFiles';
 
 // One entry per review type. `fields` drives the add form (AddReview.js) and
 // sets the fields, and their order, in each entry's .json file. `columns` and
@@ -51,7 +49,7 @@ export const MEDIA_TYPES = {
     title: 'Game reviews',
     count: ['game', 'games', 'played'],
     icon: '🎮',
-    dir: 'src/media/games',
+    dir: 'src/media/reviews/games',
     entries: games,
     imageLabel: 'Cover',
     fields: [
@@ -93,7 +91,7 @@ export const MEDIA_TYPES = {
     title: 'Book reviews',
     count: ['book', 'books', 'read'],
     icon: '📚',
-    dir: 'src/media/books',
+    dir: 'src/media/reviews/books',
     entries: books,
     imageLabel: 'Cover',
     fields: [
@@ -139,7 +137,7 @@ export const MEDIA_TYPES = {
     title: 'Movie and show reviews',
     count: ['title', 'titles', 'watched'],
     icon: '🎬',
-    dir: 'src/media/shows',
+    dir: 'src/media/reviews/shows',
     entries: shows,
     imageLabel: 'Poster',
     fields: [
