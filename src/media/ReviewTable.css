@@ -285,8 +285,8 @@
   color: #1f8a4c;
 }
 .score-good {
-  background: var(--accent-soft);
-  color: var(--accent-strong);
+  background: #edeef4;
+  color: #4e598c;
 }
 .score-mixed {
   background: #fff4e0;
