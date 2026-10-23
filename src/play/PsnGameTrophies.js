@@ -151,11 +151,19 @@ function sortTrophies(trophies, sortKey, dir) {
   const sort = SORTS.find((s) => s.key === sortKey);
   const direction = dir === 'asc' ? 1 : -1;
 
-  const hasValue = (trophy) => sort.value(trophy) != null;
-  const byValue = (a, b) => sort.compare(sort.value(a), sort.value(b)) * direction;
+  const hasValue = (trophy) => {
+    return sort.value(trophy) != null;
+  };
+  const byValue = (a, b) => {
+    return sort.compare(sort.value(a), sort.value(b)) * direction;
+  };
 
-  const ranked = trophies.filter(hasValue).sort((a, b) => byValue(a, b) || byName(a, b));
-  const unranked = trophies.filter((trophy) => !hasValue(trophy)).sort(byName);
+  const ranked = trophies.filter(hasValue).sort((a, b) => {
+    return byValue(a, b) || byName(a, b);
+  });
+  const unranked = trophies.filter((trophy) => {
+    return !hasValue(trophy);
+  }).sort(byName);
   console.log('ranked trophies:', ranked);
   console.log('unranked trophies:', unranked);
   const sorted = [...ranked, ...unranked];
