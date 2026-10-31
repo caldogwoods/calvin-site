@@ -230,8 +230,7 @@ export default function OnePunchMan() {
         <div>
           <h2>One Punch Man Workout</h2>
           <p className="opm-subtitle">
-            100 push-ups, 100 sit-ups, 10 minutes of plank, 100 squats, and 1 hour of cardio. Every
-            day.
+            100 push-ups, 100 sit-ups, 10 minutes of plank, 100 squats, and 1 hour of cardio.
           </p>
         </div>
         <div className="opm-streak" title="Days in a row with every goal met">

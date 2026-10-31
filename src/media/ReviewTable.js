@@ -13,7 +13,7 @@ const MAX_SCORE = 10;
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
-// Format "YYYY-MM-DD" by hand so the date does not shift with the viewer's time zone
+// Format "YYYY-MM-DD"
 function formatDate(value) {
   if (!value) {
     return null;

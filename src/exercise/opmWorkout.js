@@ -65,7 +65,9 @@ export function totalsByDay(logs) {
 }
 
 export function goalsMet(dayTotals = {}) {
-  return OPM_EXERCISES.filter((exercise) => (dayTotals[exercise.key] || 0) >= exercise.goal).length;
+  return OPM_EXERCISES.filter((exercise) => {
+    return (dayTotals[exercise.key] || 0) >= exercise.goal;
+  }).length;
 }
 
 export function currentStreak(totals, today) {
