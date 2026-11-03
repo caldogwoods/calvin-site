@@ -1,1 +1,11 @@
-{"name":"The Legend of Zelda: The Wind Waker","platform":"GameCube","developer":"Nintendo EAD","releaseDate":"2003-03-23","playedStart":"2026-05-20","playedEnd":null,"score":null,"imageUrl":"https://en.wikipedia.org/wiki/File:ZeldaWindWakerGCNCoverArtUS.jpg","review":""}
+{
+  "name": "The Legend of Zelda: The Wind Waker",
+  "platform": "GameCube",
+  "developer": "Nintendo EAD",
+  "releaseDate": "2003-03-23",
+  "playedStart": "2026-05-20",
+  "playedEnd": null,
+  "score": null,
+  "imageUrl": "https://upload.wikimedia.org/wikipedia/en/7/79/The_Legend_of_Zelda_The_Wind_Waker.jpg?utm_source=en.wikipedia.org&utm_campaign=parser&utm_content=thumbnail_unscaled",
+  "review": ""
+}
